@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>楂樼骇鍒烽灏忕▼搴?- 浜哄伐鏅鸿兘搴旂敤宸ョ▼甯堬紙楂樼骇锛夎璇佸鑰?/title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#4A90D9;--primary-light:#E8F2FC;--primary-dark:#3A7BC8;--bg:#f5f7fa;--card:#fff;--text:#2c3e50;--text-light:#7a8a9a;--border:#eef2f7;--success:#27ae60;--danger:#e74c3c;--warning:#f39c12;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,.06)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.app{max-width:800px;margin:0 auto;min-height:100vh}
+.view{display:none;padding:16px}.view.active{display:block}
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:20px 16px;text-align:center;border-radius:0 0 var(--radius) var(--radius);margin-bottom:8px}
+.header h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+.header .subtitle{font-size:13px;opacity:.85;margin-top:4px}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow)}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+.stat-item{text-align:center;padding:16px 8px;background:var(--primary-light);border-radius:8px}
+.stat-item .num{font-size:28px;font-weight:700;color:var(--primary)}
+.stat-item .label{font-size:12px;color:var(--text-light);margin-top:4px}
+.btn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px}
+.btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;background:var(--card);text-decoration:none;color:var(--text)}
+.btn:hover{border-color:var(--primary);background:var(--primary-light)}
+.btn .icon{font-size:28px;margin-bottom:8px}
+.btn .title{font-size:15px;font-weight:600}
+.btn .desc{font-size:12px;color:var(--text-light);margin-top:4px}
+.btn-primary{background:var(--primary);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:15px;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--danger);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer}
+.btn:disabled,.btn.disabled{opacity:.5;cursor:not-allowed}
+.back-bar{display:flex;align-items:center;margin-bottom:16px;gap:12px}
+.back-bar .back-btn{font-size:20px;cursor:pointer;color:var(--primary);background:none;border:none;padding:4px 8px}
+.back-bar h2{font-size:18px;color:var(--text)}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.tag-single{background:#e8f2fc;color:#4a90d9}
+.tag-multiple{background:#fdeaea;color:#e74c3c}
+.tag-truefalse{background:#e8f8ec;color:#27ae60}
+.tag-short{background:#fef5e7;color:#f39c12}
+.tag-predict{background:#f0e8fc;color:#9b59b6}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .3s}
+.question-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:12px}
+.question-stem{font-size:16px;line-height:1.8;margin-bottom:16px}
+.option-list{display:flex;flex-direction:column;gap:10px}
+.option-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s}
+.option-item:hover{border-color:var(--primary);background:var(--primary-light)}
+.option-item.selected{border-color:var(--primary);background:var(--primary-light)}
+.option-item.correct{border-color:var(--success);background:#e8f8ec}
+.option-item.wrong{border-color:var(--danger);background:#fdeaea}
+.option-letter{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+.option-item.selected .option-letter{background:var(--primary);color:#fff;border-color:var(--primary)}
+.option-item.correct .option-letter{background:var(--success);color:#fff;border-color:var(--success)}
+.option-item.wrong .option-letter{background:var(--danger);color:#fff;border-color:var(--danger)}
+.option-text{flex:1;font-size:14px}
+.answer-area{width:100%;min-height:120px;padding:14px;border:2px solid var(--border);border-radius:10px;font-size:14px;resize:vertical;font-family:inherit;line-height:1.7}
+.answer-area:focus{outline:none;border-color:var(--primary)}
+.explanation{background:#f8fbfe;border-left:3px solid var(--primary);padding:14px 16px;border-radius:0 8px 8px 0;margin-top:16px;font-size:14px}
+.explanation .label{font-weight:600;color:var(--primary);margin-bottom:4px}
+.result-correct{color:var(--success);font-weight:600}
+.result-wrong{color:var(--danger);font-weight:600}
+.quiz-footer{display:flex;gap:12px;justify-content:space-between;margin-top:16px}
+.timer{font-size:18px;font-weight:700;color:var(--primary)}
+.timer.warning{color:var(--danger)}
+.exam-nav{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:12px 0}
+.nav-cell{text-align:center;padding:6px 2px;border:1px solid var(--border);border-radius:4px;font-size:12px;cursor:pointer;transition:all .15s}
+.nav-cell:hover{border-color:var(--primary)}
+.nav-cell.answered{background:var(--primary-light);color:var(--primary)}
+.nav-cell.current{border:2px solid var(--primary);font-weight:700}
+.result-score{text-align:center;padding:24px 0}
+.result-score .score{font-size:48px;font-weight:700;color:var(--primary)}
+.result-score .label{font-size:14px;color:var(--text-light)}
+.result-detail{margin-top:16px}
+.detail-item{border-bottom:1px solid var(--border);padding:16px 0}
+.detail-item:last-child{border-bottom:none}
+.detail-item .stem{font-size:15px;margin-bottom:8px}
+.detail-item .your-answer{padding:8px 12px;border-radius:6px;margin:4px 0;font-size:13px}
+.detail-item .your-answer.correct{background:#e8f8ec;color:var(--success)}
+.detail-item .your-answer.wrong{background:#fdeaea;color:var(--danger)}
+.disclaimer{text-align:center;font-size:12px;color:var(--text-light);padding:16px;margin-top:8px}
+.settings-group{margin-bottom:20px}
+.settings-group h3{font-size:16px;margin-bottom:12px;color:var(--text)}
+.setting-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-item:last-child{border-bottom:none}
+.setting-item label{font-size:14px}
+.setting-item .switch{position:relative;width:44px;height:24px;background:#ccc;border-radius:12px;cursor:pointer;transition:all .2s}
+.setting-item .switch.on{background:var(--primary)}
+.setting-item .switch::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;transition:all .2s}
+.setting-item .switch.on::after{left:22px}
+.setting-item input[type=text],.setting-item input[type=password]{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-top:4px}
+.input-group{margin-bottom:12px}
+.input-group label{display:block;font-size:13px;color:var(--text-light);margin-bottom:4px}
+.chart-container{position:relative;margin:12px 0}
+.empty-state{text-align:center;padding:48px 16px;color:var(--text-light)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.hint-box{background:#fef5e7;border:1px solid #f5e0b3;border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;color:#8a6d3b}
+.ai-feedback{background:#e8f2fc;border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px}
+.ai-feedback .score{font-size:20px;font-weight:700;color:var(--primary)}
+.self-eval{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.self-eval button{padding:8px 16px;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px;background:#fff}
+.self-eval button:hover{border-color:var(--primary);color:var(--primary)}
+.loading{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:var(--radius);padding:24px;max-width:90%;width:400px;text-align:center}
+.modal h3{font-size:18px;margin-bottom:12px}
+.modal p{font-size:14px;color:var(--text-light);margin-bottom:20px}
+.modal .actions{display:flex;gap:12px;justify-content:center}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+th{background:var(--primary-light);color:var(--primary);padding:8px;text-align:left;font-weight:600;border-bottom:2px solid #d0e3f5}
+td{padding:8px;border-bottom:1px solid var(--border)}
+@media(max-width:600px){.exam-nav{grid-template-columns:repeat(6,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}.btn-grid{grid-template-columns:1fr}.question-stem{font-size:15px}.option-item{padding:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header">
+<h1>楂樼骇鍒烽灏忕▼搴?/h1>
+<div class="subtitle">浜哄伐鏅鸿兘搴旂敤宸ョ▼甯堬紙楂樼骇锛夎璇佸鑰?/div>
+</div>
+
+<div id="view-home" class="view active">
+<div class="stat-grid" id="home-stats"></div>
+<div class="btn-grid">
+<div class="btn" onclick="navigate('practice-select')"><div class="icon">馃摑</div><div class="title">寮€濮嬬粌涔?/div><div class="desc">鎸夐鍨嬩笓椤?閿欓/闅忔満</div></div>
+<div class="btn" onclick="navigate('exam-info')"><div class="icon">馃搵</div><div class="title">妯℃嫙鑰冭瘯</div><div class="desc">84棰?120鍒嗛挓/100鍒?/div></div>
+<div class="btn" onclick="navigate('error-book')"><div class="icon">鉂?/div><div class="title">閿欓鏈?/div><div class="desc" id="error-count-display">0閬撻敊棰樺緟澶嶄範</div></div>
+<div class="btn" onclick="navigate('stats')"><div class="icon">馃搳</div><div class="title">缁熻鍒嗘瀽</div><div class="desc">瓒嬪娍/姝ｇ‘鐜?鍒嗛」</div></div>
+</div>
+<div style="text-align:center;margin-top:12px">
+<button class="btn-secondary" onclick="navigate('settings')">鈿欙笍 璁剧疆</button>
+</div>
+<div class="disclaimer">棰樺簱鍏?6棰橈紙鍚?閬撻娴嬮锛壜?鏈粌涔犱粎渚涘涔犺嚜娴嬪弬鑰冿紝涓嶆瀯鎴愬畼鏂硅璇佹垚缁╂垨涓撲笟璇勪及渚濇嵁</div>
+</div>
+
+<div id="view-practice-select" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>閫夋嫨缁冧範绫诲瀷</h2></div>
+<div class="btn-grid" id="practice-types"></div>
+</div>
+
+<div id="view-quiz" class="view">
+<div class="quiz-header"><span id="quiz-progress-text"></span><button class="btn-secondary" onclick="exitPractice()">閫€鍑?/button></div>
+<div class="progress-bar"><div class="progress-fill" id="quiz-progress-bar"></div></div>
+<div id="quiz-content"></div>
+<div class="quiz-footer" id="quiz-footer"></div>
+</div>
+
+<div id="view-practice-result" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>缁冧範缁撴灉</h2></div>
+<div id="practice-result-content"></div>
+<div class="disclaimer">鏈粌涔犱粎渚涘涔犺嚜娴嬪弬鑰冿紝涓嶆瀯鎴愬畼鏂硅璇佹垚缁╂垨涓撲笟璇勪及渚濇嵁</div>
+</div>
+
+<div id="view-exam-info" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>妯℃嫙鑰冭瘯</h2></div>
+<div class="card">
+<h3 style="margin-bottom:12px">鑰冭瘯瑙勫垯</h3>
+<table>
+<tr><th>椤圭洰</th><th>鍐呭</th></tr>
+<tr><td>棰樼洰鏁伴噺</td><td>84棰橈紙涓嶅惈棰勬祴棰橈級</td></tr>
+<tr><td>鏃堕棿闄愬埗</td><td>120鍒嗛挓</td></tr>
+<tr><td>鎬诲垎</td><td>100鍒?/td></tr>
+<tr><td>鍗曢€夐</td><td>40棰樏?鍒?40鍒?/td></tr>
+<tr><td>澶氶€夐</td><td>20棰樏?.5鍒?30鍒?/td></tr>
+<tr><td>鍒ゆ柇棰?/td><td>20棰樏?.5鍒?10鍒?/td></tr>
+<tr><td>绠€绛旈</td><td>4棰樏?鍒?20鍒?/td></tr>
+</table>
+<p style="font-size:13px;color:var(--text-light);margin-top:12px">路 鍙墠鍚庣炕棰橈紝鏃堕棿鍒拌嚜鍔ㄤ氦鍗?br>路 绠€绛旈浜ゅ嵎鍚嶢I缁熶竴鍒ゅ垎锛堥渶閰嶇疆API锛?br>路 棰樼洰鍜岄€夐」椤哄簭灏嗘墦涔?/p>
+<button class="btn-primary" style="width:100%;margin-top:16px" onclick="startExam()">寮€濮嬭€冭瘯</button>
+</div>
+</div>
+
+<div id="view-exam-quiz" class="view">
+<div class="quiz-header"><span class="timer" id="exam-timer">02:00:00</span><span id="exam-progress-text"></span></div>
+<div class="progress-bar"><div class="progress-fill" id="exam-progress-bar"></div></div>
+<div id="exam-content"></div>
+<div class="exam-nav" id="exam-nav"></div>
+<div class="quiz-footer">
+<button class="btn-secondary" onclick="prevExamQuestion()">涓婁竴棰?/button>
+<button class="btn-secondary" onclick="nextExamQuestion()">涓嬩竴棰?/button>
+<button class="btn-danger" onclick="confirmSubmitExam()">浜ゅ嵎</button>
+</div>
+</div>
+
+<div id="view-exam-result" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>鑰冭瘯鎴愮哗</h2></div>
+<div id="exam-result-content"></div>
+<div class="disclaimer">鏈粌涔犱粎渚涘涔犺嚜娴嬪弬鑰冿紝涓嶆瀯鎴愬畼鏂硅璇佹垚缁╂垨涓撲笟璇勪及渚濇嵁</div>
+</div>
+
+<div id="view-error-book" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>閿欓鏈?/h2></div>
+<div id="error-book-content"></div>
+</div>
+
+<div id="view-stats" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>缁熻鍒嗘瀽</h2></div>
+<div id="stats-content"></div>
+</div>
+
+<div id="view-settings" class="view">
+<div class="back-bar"><button class="back-btn" onclick="navigate('home')">鈫?/button><h2>璁剧疆</h2></div>
+<div class="card">
+<div class="settings-group">
+<h3>涔卞簭璁剧疆</h3>
+<div class="setting-item"><label>棰樼洰椤哄簭鎵撲贡</label><div class="switch on" id="setting-shuffle-q" onclick="toggleSetting('shuffleQ',this)"></div></div>
+<div class="setting-item"><label>閫夐」椤哄簭鎵撲贡</label><div class="switch on" id="setting-shuffle-o" onclick="toggleSetting('shuffleO',this)"></div></div>
+</div>
+</div>
+<div class="card">
+<div class="settings-group">
+<h3>AI鍒ゅ垎閰嶇疆</h3>
+<div class="input-group"><label>API Base URL</label><input type="text" id="setting-api-url" placeholder="https://api.openai.com/v1"></div>
+<div class="input-group"><label>API Key</label><input type="password" id="setting-api-key" placeholder="sk-..."></div>
+<div class="input-group"><label>妯″瀷鍚嶇О</label><input type="text" id="setting-model" placeholder="gpt-4o-mini"></div>
+<button class="btn-secondary" onclick="testAPI()">娴嬭瘯杩炴帴</button>
+<span id="api-test-result" style="margin-left:12px;font-size:13px"></span>
+</div>
+</div>
+<div class="card">
+<div class="settings-group">
+<h3>鏁版嵁绠＄悊</h3>
+<button class="btn-danger" onclick="confirmClearData()">娓呴櫎鎵€鏈夋暟鎹?/button>
+</div>
+</div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modal"><div class="modal" id="modal-content"></div></div>
+
+<script>
+// ===== Question Bank (86 questions) =====
+const QUESTIONS=[
+{id:"Q001",type:"single",score:1,stem:'RAG涓殑"鍚戦噺鏁版嵁搴?涓昏浣滅敤鏄?,options:["瀛樺偍缁撴瀯鍖栨暟鎹?,"鍘嬬缉妯″瀷鍙傛暟","瀛樺偍鍜屾绱㈤珮缁村悜閲忚〃绀?,"鎵цSQL鏌ヨ"],answer:"瀛樺偍鍜屾绱㈤珮缁村悜閲忚〃绀?,explain:"鍚戦噺鏁版嵁搴撲笓闂ㄧ敤浜庡瓨鍌ㄩ珮缁村悜閲?Embedding)锛屾敮鎸佸熀浜庣浉浼煎害鐨勫揩閫熸绱紝鏄疪AG绯荤粺涓绱㈤樁娈电殑鏍稿績缁勪欢銆?,kp:["鍚戦噺鏁版嵁搴?,"鐩镐技搴︽绱?]},
+{id:"Q002",type:"single",score:1,stem:"AI椤圭洰鍏ㄧ敓鍛藉懆鏈熼€氬父涓嶅寘鎷互涓嬪摢涓樁娈?,options:["纭欢鍒堕€?,"鏁版嵁鍑嗗","妯″瀷寮€鍙?,"闇€姹傚垎鏋?],answer:"纭欢鍒堕€?,explain:"AI椤圭洰鍏ㄧ敓鍛藉懆鏈熷寘鎷渶姹傚垎鏋愩€佹暟鎹噯澶囥€佹ā鍨嬪紑鍙戙€佹祴璇曡瘎浼般€侀儴缃蹭笂绾裤€佽繍缁磋凯浠ｇ瓑闃舵锛岀‖浠跺埗閫犱笉灞炰簬AI椤圭洰鐢熷懡鍛ㄦ湡銆?,kp:["AI椤圭洰鐢熷懡鍛ㄦ湡","闃舵鍒掑垎"]},
+{id:"Q003",type:"single",score:1,stem:"鍦ㄥ吀鍨嬬殑RAG鏋舵瀯涓紝绗竴姝ラ€氬父鏄?,options:["鏂囨。鍚戦噺鍖?,"鐩镐技搴︽绱?,"鐢ㄦ埛鎻愰棶","鐢熸垚鍥炵瓟"],answer:"鏂囨。鍚戦噺鍖?,explain:"RAG鐨勭绾垮鐞嗛樁娈甸鍏堥渶瑕佸皢鏂囨。杩涜鍒嗗潡鍜屽悜閲忓寲(Embedding)锛屾瀯寤哄悜閲忕储寮曪紝杩欐槸鍚庣画妫€绱㈢殑鍩虹銆?,kp:["RAG宸ヤ綔娴佺▼","鏂囨。鍚戦噺鍖?]},
+{id:"Q004",type:"single",score:1,stem:'Skill璁捐涓?鍗曚竴鑱岃矗鍘熷垯"鏄寚',options:["涓€涓猄kill鍙兘鐢变竴涓紑鍙戣€呯淮鎶?,"涓€涓猄kill鍙礋璐ｅ畬鎴愪竴椤规槑纭殑鍔熻兘","涓€涓猄kill鍙兘澶勭悊涓€绉嶆暟鎹牸寮?,"涓€涓猄kill鍙兘琚皟鐢ㄤ竴娆?],answer:"涓€涓猄kill鍙礋璐ｅ畬鎴愪竴椤规槑纭殑鍔熻兘",explain:"鍗曚竴鑱岃矗鍘熷垯瑕佹眰姣忎釜Skill鍙礋璐ｄ竴椤规槑纭殑鍔熻兘锛岃亴璐ｆ竻鏅帮紝渚夸簬澶嶇敤銆佹祴璇曞拰缁存姢銆?,kp:["Skill璁捐鍘熷垯","鍗曚竴鑱岃矗"]},
+{id:"Q005",type:"single",score:1,stem:"浠ヤ笅鍝婵€娲诲嚱鏁板彲浠ヨВ鍐虫搴︽秷澶遍棶棰?,options:["ReLU","Sigmoid","Softmax","Tanh"],answer:"ReLU",explain:"ReLU鍦ㄦ鍖洪棿姊害鎭掍负1锛屾湁鏁堢紦瑙ｄ簡娣卞眰缃戠粶涓殑姊害娑堝け闂锛屾槸鐩墠鏈€甯哥敤鐨勬縺娲诲嚱鏁颁箣涓€銆?,kp:["ReLU婵€娲诲嚱鏁?,"姊害娑堝け闂"]},
+{id:"Q006",type:"single",score:1,stem:"浠ヤ笅鍝」涓嶆槸澶ц瑷€妯″瀷鐨勫吀鍨嬪簲鐢ㄥ満鏅?,options:["缈昏瘧","鏂囨湰鐢熸垚","浠ｇ爜缂栧啓","鏈烘鍔犲伐"],answer:"鏈烘鍔犲伐",explain:"澶ц瑷€妯″瀷涓昏搴旂敤浜庤嚜鐒惰瑷€澶勭悊鐩稿叧鍦烘櫙锛屾満姊板姞宸ュ睘浜庣墿鐞嗗埗閫犻鍩熴€?,kp:["澶фā鍨嬪簲鐢ㄥ満鏅?,"鑷劧璇█澶勭悊"]},
+{id:"Q007",type:"single",score:1,stem:'澶ц瑷€妯″瀷(LLM)鐨?澶?涓昏鎸囩殑鏄?,options:["鐗╃悊灏哄澶?,"鏂囦欢浣撶Н澶?,"鍙傛暟閲忓拰璁粌鏁版嵁閲忓ぇ","杩愯鍐呭瓨澶?],answer:"鍙傛暟閲忓拰璁粌鏁版嵁閲忓ぇ",explain:"澶ц瑷€妯″瀷鐨?澶?涓昏鎸囧弬鏁伴噺瑙勬ā澶?閫氬父鏁板崄浜垮埌鏁板崈浜垮弬鏁?浠ュ強璁粌鏁版嵁瑙勬ā澶с€?,kp:["澶ц瑷€妯″瀷瀹氫箟","鍙傛暟閲忚妯?]},
+{id:"Q008",type:"single",score:1,stem:"琛屼笟澶фā鍨嬮€傞厤鐨勯瑕佹楠ら€氬父鏄?,options:["鐩存帴閮ㄧ讲閫氱敤澶фā鍨?,"淇敼妯″瀷鏋舵瀯","鏇存崲纭欢璁惧","琛屼笟鏁版嵁鏀堕泦涓庢竻娲?],answer:"琛屼笟鏁版嵁鏀堕泦涓庢竻娲?,explain:"琛屼笟澶фā鍨嬮€傞厤棣栧厛闇€瑕佹敹闆嗗拰娓呮礂琛屼笟涓撳睘鏁版嵁锛屾瀯寤洪珮璐ㄩ噺鐨勯鍩熸暟鎹泦銆?,kp:["琛屼笟澶фā鍨嬮€傞厤","鏁版嵁鍑嗗"]},
+{id:"Q009",type:"single",score:1,stem:"鍦ㄤ紒涓氱骇AI搴旂敤涓紝Skill绠＄悊骞冲彴鐨勬牳蹇冨姛鑳戒笉鍖呮嫭",options:["Skill鐨勬敞鍐屼笌鍙戠幇","鍛樺伐鑰冨嫟绠＄悊","Skill鐨勮皟鐢ㄧ洃鎺?,"Skill鐨勭増鏈鐞?],answer:"鍛樺伐鑰冨嫟绠＄悊",explain:"Skill绠＄悊骞冲彴涓昏璐熻矗Skill鐨勬敞鍐屻€佸彂鐜般€佺増鏈鐞嗐€佽皟鐢ㄧ洃鎺с€佹潈闄愮鐞嗙瓑鍔熻兘锛屽憳宸ヨ€冨嫟涓嶅睘浜嶴kill绠＄悊鑼冪暣銆?,kp:["Skill绠＄悊骞冲彴","浼佷笟绾у簲鐢?]},
+{id:"Q010",type:"single",score:1,stem:"Transformer鏋舵瀯涓紝鏍稿績鐨勬敞鎰忓姏鏈哄埗鏄?,options:["鍗曞ご娉ㄦ剰鍔?,"寰幆娉ㄦ剰鍔?,"澶氬ご鑷敞鎰忓姏","鍗风Н娉ㄦ剰鍔?],answer:"澶氬ご鑷敞鎰忓姏",explain:"Transformer鐨勬牳蹇冩槸澶氬ご鑷敞鎰忓姏(Multi-Head Self-Attention)鏈哄埗锛岃兘澶熷苟琛岃绠楀簭鍒椾腑鍚勪綅缃箣闂寸殑渚濊禆鍏崇郴銆?,kp:["Transformer鏋舵瀯","澶氬ご鑷敞鎰忓姏"]},
+{id:"Q011",type:"single",score:1,stem:"RAG鐨勪腑鏂囧叏绉版槸",options:["闅忔満娉ㄦ剰鍔涚敓鎴?,"閫掑綊绠楁硶鐢熸垚","妫€绱㈠寮虹敓鎴?,"姝ｅ垯琛ㄨ揪寮忕敓鎴?],answer:"妫€绱㈠寮虹敓鎴?,explain:"RAG(Retrieval-Augmented Generation)鍗虫绱㈠寮虹敓鎴愶紝鏄竴绉嶇粨鍚堟绱㈢郴缁熷拰鐢熸垚妯″瀷鐨勬妧鏈鏋躲€?,kp:["RAG鍩烘湰姒傚康","妫€绱㈠寮虹敓鎴?]},
+{id:"Q012",type:"single",score:1,stem:"AI椤圭洰涓庝紶缁熻蒋浠堕」鐩渶澶х殑鍖哄埆鍦ㄤ簬",options:["寮€鍙戞椂闂存洿闀?,"闇€瑕佹洿澶氫汉鍛?,"浠ｇ爜閲忔洿澶?,"浠ユ暟鎹拰妯″瀷涓烘牳蹇冿紝涓嶇‘瀹氭€ф洿楂?],answer:"浠ユ暟鎹拰妯″瀷涓烘牳蹇冿紝涓嶇‘瀹氭€ф洿楂?,explain:"AI椤圭洰浠ユ暟鎹拰妯″瀷涓烘牳蹇冿紝鏁版嵁璐ㄩ噺鍜屾ā鍨嬫晥鏋滃叿鏈変笉纭畾鎬э紝鐮斿彂杩囩▼鏇村叿鎺㈢储鎬с€?,kp:["AI椤圭洰鐗圭偣","涓嶇‘瀹氭€х鐞?]},
+{id:"Q013",type:"single",score:1,stem:'鐭ヨ瘑钂搁(Knowledge Distillation)涓紝"鏁欏笀妯″瀷"鏄寚',options:["浜哄伐鏍囨敞鐨勬ā鍨?,"灏忚€屽揩鐨勬ā鍨?,"鏁欏鐢ㄧ殑妯″瀷","澶ц€屽己鐨勫師濮嬫ā鍨?],answer:"澶ц€屽己鐨勫師濮嬫ā鍨?,explain:"鐭ヨ瘑钂搁涓紝鏁欏笀妯″瀷閫氬父鏄弬鏁伴噺澶с€佹€ц兘寮虹殑鍘熷妯″瀷锛岀敤浜庢寚瀵煎鐢熸ā鍨嬪涔犮€?,kp:["鐭ヨ瘑钂搁","鏁欏笀-瀛︾敓妯″瀷"]},
+{id:"Q014",type:"single",score:1,stem:"浠ヤ笅鍝」鏄疭kill鍙粍鍚堟€у甫鏉ョ殑涓昏浼樺娍",options:["鍙互閫氳繃缁勫悎绠€鍗昐kill瀹炵幇澶嶆潅浠诲姟","澧炲姞绯荤粺鑰﹀悎搴?,"鍑忓皯Skill鐨勬暟閲?,"闄嶄綆浠ｇ爜鍙鎬?],answer:"鍙互閫氳繃缁勫悎绠€鍗昐kill瀹炵幇澶嶆潅浠诲姟",explain:"鍙粍鍚堟€ф槸Skill鐨勯噸瑕佷紭鍔匡紝閫氳繃灏嗗涓畝鍗曘€侀€氱敤鐨凷kill鐏垫椿缁勫悎锛屽彲浠ュ揩閫熸瀯寤哄鏉備换鍔＄殑瑙ｅ喅鏂规銆?,kp:["Skill缁勫悎","澶嶇敤鎬?]},
+{id:"Q015",type:"single",score:1,stem:"璇勪及涓€涓猄kill璐ㄩ噺鐨勬牳蹇冩寚鏍囨槸",options:["Skill鐨勪唬鐮佽鏁板灏?,"Skill鐨勫紑鍙戣€呯骇鍒?,"Skill鐨勫悕绉版槸鍚﹀ソ鍚?,"Skill瀹屾垚瀵瑰簲浠诲姟鐨勫噯纭巼銆佺ǔ瀹氭€у拰鏁堢巼"],answer:"Skill瀹屾垚瀵瑰簲浠诲姟鐨勫噯纭巼銆佺ǔ瀹氭€у拰鏁堢巼",explain:"璇勪及Skill璐ㄩ噺涓昏鐪嬪叾瀹屾垚鐩爣浠诲姟鐨勬晥鏋滐紝鍖呮嫭鍑嗙‘鐜囥€佺ǔ瀹氭€с€佸搷搴旈€熷害銆佸閿欒兘鍔涚瓑瀹為檯琛ㄧ幇銆?,kp:["Skill璇勪及","璐ㄩ噺鎸囨爣"]},
+{id:"Q016",type:"single",score:1,stem:"鍦ㄦ櫤鑳戒綋鏋舵瀯涓紝璐熻矗鎰熺煡鐜淇℃伅鐨勬ā鍧楁槸",options:["鎵ц鍣?,"鎰熺煡鍣?,"鎺ㄧ悊寮曟搸","鐭ヨ瘑搴?],answer:"鎰熺煡鍣?,explain:"鎰熺煡鍣ㄨ礋璐ｆ帴鏀跺拰澶勭悊鏉ヨ嚜鐜鐨勬劅鐭ヤ俊鎭紝鏄櫤鑳戒綋涓庡閮ㄧ幆澧冧氦浜掔殑杈撳叆鎺ュ彛銆?,kp:["鏅鸿兘浣撴灦鏋勭粍鎴?,"鎰熺煡妯″潡鍔熻兘"]},
+{id:"Q017",type:"single",score:1,stem:"鏅鸿兘浣撲笌浼犵粺绋嬪簭鐨勬湰璐ㄥ尯鍒湪浜?,options:["鏅鸿兘浣撲笉闇€瑕佺‖浠舵敮鎸?,"鏅鸿兘浣撹兘澶熻嚜涓绘劅鐭ョ幆澧冨苟鍋氬嚭鍐崇瓥","鏅鸿兘浣撲娇鐢ㄧ殑缂栫▼璇█鏇撮珮绾?,"鏅鸿兘浣撹繍琛岄€熷害鏇村揩"],answer:"鏅鸿兘浣撹兘澶熻嚜涓绘劅鐭ョ幆澧冨苟鍋氬嚭鍐崇瓥",explain:"鏅鸿兘浣撳叿鏈夎嚜涓绘€э紝鑳藉鎰熺煡鐜銆佽嚜涓诲喅绛栧苟閲囧彇琛屽姩浠ュ疄鐜扮洰鏍囷紝鑰屼紶缁熺▼搴忔槸琚姩鎵ц棰勮鎸囦护銆?,kp:["鏅鸿兘浣撳畾涔?,"鑷富鎬х壒寰?]},
+{id:"Q018",type:"single",score:1,stem:"寰幆绁炵粡缃戠粶(RNN)鐨勪富瑕佺壒鐐规槸",options:["鍏锋湁璁板繂鑳藉姏锛岄€傚悎澶勭悊搴忓垪鏁版嵁","鍙€傜敤浜庡浘鍍忓鐞?,"鍙兘澶勭悊鍥哄畾闀垮害杈撳叆","涓嶉渶瑕佽缁冩暟鎹?],answer:"鍏锋湁璁板繂鑳藉姏锛岄€傚悎澶勭悊搴忓垪鏁版嵁",explain:"RNN閫氳繃闅愯棌鐘舵€佺殑寰幆杩炴帴鍏锋湁璁板繂鑳藉姏锛岃兘澶熷鐞嗗彉闀垮簭鍒楁暟鎹€?,kp:["寰幆绁炵粡缃戠粶","搴忓垪鏁版嵁澶勭悊"]},
+{id:"Q019",type:"single",score:1,stem:"Prompt Engineering(鎻愮ず宸ョ▼)鐨勬牳蹇冪洰鏍囨槸",options:["澧炲姞妯″瀷鍙傛暟閲?,"淇敼妯″瀷鍙傛暟","鍔犻€熸ā鍨嬭缁?,"閫氳繃浼樺寲杈撳叆鎻愮ず鑾峰緱鏇村ソ鐨勬ā鍨嬭緭鍑?],answer:"閫氳繃浼樺寲杈撳叆鎻愮ず鑾峰緱鏇村ソ鐨勬ā鍨嬭緭鍑?,explain:"鎻愮ず宸ョ▼閫氳繃璁捐鍜屼紭鍖栬緭鍏ユ彁绀鸿瘝鐨勭粨鏋勩€佸唴瀹瑰拰鏍煎紡锛屽紩瀵煎ぇ妯″瀷浜у嚭鏇撮珮璐ㄩ噺銆佹洿绗﹀悎棰勬湡鐨勮緭鍑虹粨鏋溿€?,kp:["鎻愮ず宸ョ▼","Prompt浼樺寲"]},
+{id:"Q020",type:"single",score:1,stem:"浠ヤ笅鍝涓嶆槸澶氭櫤鑳戒綋鐨勫吀鍨嬪崗浣滄ā寮?,options:["闆嗕腑寮忓崗浣?,"娣峰悎寮忓崗浣?,"鍒嗗竷寮忓崗浣?,"鐙珛寮忓崗浣?],answer:"鐙珛寮忓崗浣?,explain:"澶氭櫤鑳戒綋鍗忎綔妯″紡鍖呮嫭闆嗕腑寮忋€佸垎甯冨紡鍜屾贩鍚堝紡锛岀嫭绔嬪紡涓嶆秹鍙婂崗浣滐紝涓嶅睘浜庡崗浣滄ā寮忋€?,kp:["鍗忎綔妯″紡鍒嗙被","闆嗕腑寮忎笌鍒嗗竷寮?]},
+{id:"Q021",type:"single",score:1,stem:'"鍙嶅悜浼犳挱绠楁硶"涓昏鐢ㄤ簬',options:["绁炵粡缃戠粶鍙傛暟鏇存柊","鏁版嵁鍙鍖?,"妯″瀷閮ㄧ讲","鏁版嵁棰勫鐞?],answer:"绁炵粡缃戠粶鍙傛暟鏇存柊",explain:"鍙嶅悜浼犳挱鏄缁冪缁忕綉缁滅殑鏍稿績绠楁硶锛岄€氳繃閾惧紡娉曞垯璁＄畻鎹熷け鍑芥暟瀵瑰悇灞傚弬鏁扮殑姊害锛岀敤浜庡弬鏁版洿鏂般€?,kp:["鍙嶅悜浼犳挱绠楁硶","绁炵粡缃戠粶璁粌"]},
+{id:"Q022",type:"single",score:1,stem:"RAG鎶€鏈殑涓昏鐩殑鏄В鍐冲ぇ璇█妯″瀷鐨勪粈涔堥棶棰?,options:["鐭ヨ瘑鏃舵晥鎬у拰骞昏闂","鎺ㄧ悊閫熷害鎱?,"妯″瀷浣撶Н杩囧ぇ","璁粌閫熷害鎱?],answer:"鐭ヨ瘑鏃舵晥鎬у拰骞昏闂",explain:"RAG閫氳繃浠庡閮ㄧ煡璇嗗簱妫€绱㈢浉鍏虫枃妗ｅ苟浣滀负涓婁笅鏂囪緭鍏ョ粰澶фā鍨嬶紝鏈夋晥瑙ｅ喅浜嗗ぇ妯″瀷鐭ヨ瘑鎴銆佷簨瀹炴€у够瑙夊拰绉佹湁鐭ヨ瘑鎺ュ叆绛夐棶棰樸€?,kp:["RAG鎶€鏈紭鍔?,"澶фā鍨嬪够瑙夐棶棰?]},
+{id:"Q023",type:"single",score:1,stem:'鍦≧AG娴佺▼涓紝"閲嶆帓搴?Rerank)"鐨勪綔鐢ㄦ槸',options:["瀵规绱㈢粨鏋滄寜鏃堕棿鎺掑簭","瀵规绱㈢粨鏋滄寜鐩稿叧鎬ч噸鏂版帓搴?,"瀵规枃妗ｆ寜瀛楁暟鎺掑簭","瀵圭敓鎴愭枃鏈噸鏂版帓鍒?],answer:"瀵规绱㈢粨鏋滄寜鐩稿叧鎬ч噸鏂版帓搴?,explain:"閲嶆帓搴忎娇鐢ㄦ洿绮剧‘鐨勭浉鍏虫€ц瘎鍒嗘ā鍨嬪鍒濈瓫鐨勬绱㈢粨鏋滆繘琛岄噸鏂版帓搴忥紝鎻愬崌Top-K缁撴灉鐨勭浉鍏虫€ц川閲忋€?,kp:["RAG浼樺寲鎶€鏈?,"閲嶆帓搴忔満鍒?]},
+{id:"Q024",type:"single",score:1,stem:"娣卞害瀛︿範灞炰簬浠ヤ笅鍝釜棰嗗煙鐨勫垎鏀?,options:["浼犵粺缂栫▼","鏈哄櫒瀛︿範","鏁版嵁鎸栨帢","涓撳绯荤粺"],answer:"鏈哄櫒瀛︿範",explain:"娣卞害瀛︿範鏄満鍣ㄥ涔犵殑涓€涓垎鏀紝鍩轰簬澶氬眰绁炵粡缃戠粶杩涜琛ㄧず瀛︿範銆?,kp:["娣卞害瀛︿範瀹氫箟","鏈哄櫒瀛︿範鍒嗘敮"]},
+{id:"Q025",type:"single",score:1,stem:"Skill涓庡ぇ妯″瀷鐨勫叧绯伙紝浠ヤ笅璇存硶姝ｇ‘鐨勬槸",options:["澶фā鍨嬪彲浠ヤ綔涓篠kill鐨勫疄鐜版柟寮忎箣涓€","Skill灏辨槸澶фā鍨嬫湰韬?,"澶фā鍨嬬殑鎵€鏈夎兘鍔涢兘蹇呴』閫氳繃Skill鎵嶈兘浣跨敤","Skill鍜屽ぇ妯″瀷娌℃湁鍏崇郴"],answer:"澶фā鍨嬪彲浠ヤ綔涓篠kill鐨勫疄鐜版柟寮忎箣涓€",explain:"澶фā鍨嬫槸瀹炵幇Skill鐨勬柟寮忎箣涓€锛孲kill杩樺彲浠ラ€氳繃瑙勫垯寮曟搸銆佸閮ˋPI銆佷紶缁熺畻娉曠瓑澶氱鏂瑰紡瀹炵幇銆?,kp:["Skill涓庡ぇ妯″瀷鍏崇郴","鑳藉姏瀹炵幇"]},
+{id:"Q026",type:"single",score:1,stem:'浠ヤ笅鍝鏅鸿兘浣撶被鍨嬫槸鍩轰簬"鏉′欢-鍔ㄤ綔"瑙勫垯杩涜鍐崇瓥鐨?,options:["绠€鍗曞弽灏勬櫤鑳戒綋","鍩轰簬鏁堢敤鐨勬櫤鑳戒綋","鍩轰簬鐩爣鐨勬櫤鑳戒綋","鍩轰簬妯″瀷鐨勫弽灏勬櫤鑳戒綋"],answer:"绠€鍗曞弽灏勬櫤鑳戒綋",explain:"绠€鍗曞弽灏勬櫤鑳戒綋鏍规嵁褰撳墠鎰熺煡鐩存帴閫夋嫨鍔ㄤ綔锛屽熀浜庢潯浠?鍔ㄤ綔瑙勫垯杩涜鍐崇瓥锛屼笉鑰冭檻鍘嗗彶鎰熺煡銆?,kp:["鏅鸿兘浣撶被鍨嬪垎绫?,"绠€鍗曞弽灏勬櫤鑳戒綋"]},
+{id:"Q027",type:"single",score:1,stem:'"棰嗗煙鑷€傚簲"鐨勪富瑕佺洰鏍囨槸',options:["璁╂ā鍨嬫敮鎸佹洿澶氳瑷€","璁╅€氱敤妯″瀷鍦ㄧ壒瀹氶鍩熻〃鐜版洿濂?,"璁╂ā鍨嬩綋绉洿灏?,"璁╂ā鍨嬭繍琛屾洿蹇?],answer:"璁╅€氱敤妯″瀷鍦ㄧ壒瀹氶鍩熻〃鐜版洿濂?,explain:"棰嗗煙鑷€傚簲鏃ㄥ湪灏嗗湪閫氱敤鏁版嵁涓婅缁冪殑妯″瀷閫傞厤鍒扮壒瀹氶鍩燂紝鎻愬崌妯″瀷鍦ㄧ洰鏍囬鍩熺殑鎬ц兘琛ㄧ幇銆?,kp:["棰嗗煙鑷€傚簲","杩佺Щ瀛︿範"]},
+{id:"Q028",type:"single",score:1,stem:"浠ヤ笅鍝」涓嶅睘浜嶢I浼︾悊椋庨櫓",options:["妯″瀷绮惧害涓嶈冻","闅愮娉勯湶","娣卞害浼€犳互鐢?,"绠楁硶姝ц"],answer:"妯″瀷绮惧害涓嶈冻",explain:"妯″瀷绮惧害涓嶈冻鏄妧鏈€ц兘闂锛屼笉灞炰簬浼︾悊椋庨櫓鑼冪暣銆傞殣绉佹硠闇层€佺畻娉曟瑙嗗拰娣卞害浼€犳互鐢ㄩ兘鏄吀鍨嬬殑AI浼︾悊椋庨櫓銆?,kp:["AI浼︾悊椋庨櫓","娣卞害浼€?]},
+{id:"Q029",type:"single",score:1,stem:"鏅鸿兘浣撶殑鏍稿績鐗瑰緛涓嶅寘鎷互涓嬪摢涓€椤?,options:["鍙嶅簲鎬?,"绀句細鎬?,"鑷富鎬?,"琚姩鎬?],answer:"琚姩鎬?,explain:"鏅鸿兘浣撶殑鏍稿績鐗瑰緛鍖呮嫭鑷富鎬с€佸弽搴旀€с€佷富鍔ㄦ€у拰绀句細鎬э紝琚姩鎬т笉灞炰簬鏅鸿兘浣撶殑鐗瑰緛銆?,kp:["鏅鸿兘浣撴牳蹇冪壒寰?,"鑷富鎬т笌涓诲姩鎬?]},
+{id:"Q030",type:"single",score:1,stem:"浠ヤ笅鍝寰皟鏂规硶灞炰簬鍙傛暟楂樻晥寰皟(PEFT)",options:["LoRA","浠庡ご璁粌","鍏ㄥ弬鏁板井璋?,"鏁版嵁澧炲己"],answer:"LoRA",explain:"LoRA鏄吀鍨嬬殑鍙傛暟楂樻晥寰皟鏂规硶锛屽彧璁粌灏戦噺浣庣З鐭╅樀鍙傛暟锛屽ぇ骞呴檷浣庡井璋冩垚鏈€?,kp:["鍙傛暟楂樻晥寰皟","LoRA鏂规硶"]},
+{id:"Q031",type:"single",score:1,stem:"AI椤圭洰闇€姹傚垎鏋愰樁娈碉紝鏈€閲嶈鐨勫伐浣滄槸",options:["鎷涜仒绠楁硶宸ョ▼甯?,"閲囪喘鏈嶅姟鍣?,"閫夋嫨寮€鍙戞鏋?,"鏄庣‘涓氬姟鐩爣鍜岃瘎浼版寚鏍?],answer:"鏄庣‘涓氬姟鐩爣鍜岃瘎浼版寚鏍?,explain:"闇€姹傚垎鏋愰樁娈垫渶閲嶈鐨勬槸鏄庣‘涓氬姟鐩爣銆佹垚鍔熸爣鍑嗗拰鍙噺鍖栫殑璇勪及鎸囨爣銆?,kp:["闇€姹傚垎鏋?,"璇勪及鎸囨爣璁惧畾"]},
+{id:"Q032",type:"single",score:1,stem:'绁炵粡缃戠粶涓紝"婵€娲诲嚱鏁?鐨勪富瑕佷綔鐢ㄦ槸',options:["鍑忓皯鍙傛暟鏁伴噺","寮曞叆闈炵嚎鎬у彉鎹㈣兘鍔?,"澧炲姞缃戠粶娣卞害","鍔犻€熻缁冮€熷害"],answer:"寮曞叆闈炵嚎鎬у彉鎹㈣兘鍔?,explain:"婵€娲诲嚱鏁颁负绁炵粡缃戠粶寮曞叆闈炵嚎鎬у彉鎹㈣兘鍔涳紝浣跨綉缁滆兘澶熷涔犲拰琛ㄧず澶嶆潅鐨勯潪绾挎€у叧绯汇€?,kp:["婵€娲诲嚱鏁颁綔鐢?,"闈炵嚎鎬у彉鎹?]},
+{id:"Q033",type:"single",score:1,stem:'AI瑙ｅ喅鏂规鐨?绛変繚鍚堣"涓昏娑夊強浠€涔堟爣鍑?,options:["浜у搧璐ㄩ噺鏍囧噯","杞欢寮€鍙戣鑼?,"缃戠粶瀹夊叏绛夌骇淇濇姢鍒跺害","椤圭洰绠＄悊鏍囧噯"],answer:"缃戠粶瀹夊叏绛夌骇淇濇姢鍒跺害",explain:"绛変繚鍚堣鍗崇綉缁滃畨鍏ㄧ瓑绾т繚鎶ゅ埗搴﹀悎瑙勶紝鏄垜鍥界綉缁滃畨鍏ㄩ鍩熺殑鍩烘湰鍒跺害銆?,kp:["绛変繚鍚堣","缃戠粶瀹夊叏绛夌骇淇濇姢"]},
+{id:"Q034",type:"single",score:1,stem:'澶фā鍨嬬殑"娑岀幇鑳藉姏"鏄寚',options:["妯″瀷鑷垜澶嶅埗","妯″瀷绐佺劧鍙樺ぇ","灏忔ā鍨嬫病鏈変絾澶фā鍨嬬獊鐒跺叿澶囩殑鑳藉姏","妯″瀷鑷姩鐢熸垚浠ｇ爜"],answer:"灏忔ā鍨嬫病鏈変絾澶фā鍨嬬獊鐒跺叿澶囩殑鑳藉姏",explain:"娑岀幇鑳藉姏鏄寚褰撴ā鍨嬭妯¤揪鍒颁竴瀹氶槇鍊煎悗锛岀獊鐒跺睍鐜板嚭灏忔ā鍨嬩笉鍏峰鐨勫鏉傝兘鍔涖€?,kp:["娑岀幇鑳藉姏","澶фā鍨嬬壒鎬?]},
+{id:"Q035",type:"single",score:1,stem:"浠ヤ笅鍝釜涓嶆槸涓绘祦鐨凴AG寮€婧愭鏋?,options:["LlamaIndex","LangChain","PyTorch","Haystack"],answer:"PyTorch",explain:"PyTorch鏄繁搴﹀涔犳鏋讹紝涓嶆槸RAG妗嗘灦銆侺angChain銆丩lamaIndex鍜孒aystack閮芥槸涓绘祦鐨凴AG寮€婧愬紑鍙戞鏋躲€?,kp:["RAG寮€婧愭鏋?,"LangChain涓嶭lamaIndex"]},
+{id:"Q036",type:"single",score:1,stem:'澶фā鍨嬬殑"涓婁笅鏂囩獥鍙?鎸囩殑鏄?,options:["妯″瀷鐨勬樉绀虹晫闈?,"妯″瀷鐨勭墿鐞嗗昂瀵?,"妯″瀷鐨勮缁冩椂闂寸獥鍙?,"妯″瀷涓€娆¤兘澶勭悊鐨勬渶澶oken鏁伴噺"],answer:"妯″瀷涓€娆¤兘澶勭悊鐨勬渶澶oken鏁伴噺",explain:"涓婁笅鏂囩獥鍙ｆ槸鎸囧ぇ妯″瀷涓€娆℃帹鐞嗚兘澶熷鐞嗙殑鏈€澶oken鏁伴噺銆?,kp:["涓婁笅鏂囩獥鍙?,"Token闄愬埗"]},
+{id:"Q037",type:"single",score:1,stem:"鍗风Н绁炵粡缃戠粶(CNN)鏈€鎿呴暱澶勭悊鐨勬暟鎹被鍨嬫槸",options:["鍥惧儚鏁版嵁","鏃跺簭鏁版嵁","琛ㄦ牸鏁版嵁","鏂囨湰鏁版嵁"],answer:"鍥惧儚鏁版嵁",explain:"CNN閫氳繃鍗风Н鏍告彁鍙栧眬閮ㄧ┖闂寸壒寰侊紝鐗瑰埆閫傚悎澶勭悊鍥惧儚绛夌綉鏍肩粨鏋勬暟鎹€?,kp:["鍗风Н绁炵粡缃戠粶","CNN閫傜敤鍦烘櫙"]},
+{id:"Q038",type:"single",score:1,stem:"浠ヤ笅鍝釜鏄吀鍨嬬殑AI缂栫▼鏅鸿兘浣撲骇鍝?,options:["GitHub Copilot","Excel","Word","Photoshop"],answer:"GitHub Copilot",explain:"GitHub Copilot鏄吀鍨嬬殑AI缂栫▼鍔╂墜浜у搧锛屽熀浜庡ぇ璇█妯″瀷锛岃兘澶熸牴鎹笂涓嬫枃鑷姩鐢熸垚浠ｇ爜寤鸿銆?,kp:["AI缂栫▼浜у搧","GitHub Copilot"]},
+{id:"Q039",type:"single",score:1,stem:'澶фā鍨?寰皟(Fine-tuning)"鐨勫惈涔夋槸',options:["鍦ㄩ璁粌妯″瀷鍩虹涓婄敤鐗瑰畾鏁版嵁杩涗竴姝ヨ缁?,"鍙慨鏀规ā鍨嬪悕绉?,"瀹屽叏閲嶆柊璁粌妯″瀷","鍒犻櫎閮ㄥ垎鍙傛暟"],answer:"鍦ㄩ璁粌妯″瀷鍩虹涓婄敤鐗瑰畾鏁版嵁杩涗竴姝ヨ缁?,explain:"寰皟鏄湪棰勮缁冨ぇ妯″瀷鐨勫熀纭€涓婏紝浣跨敤鐗瑰畾棰嗗煙鎴栦换鍔＄殑鏁版嵁杩涜杩涗竴姝ヨ缁冦€?,kp:["寰皟姒傚康","棰勮缁冩ā鍨嬮€傞厤"]},
+{id:"Q040",type:"single",score:1,stem:"浠ヤ笅鍝」涓嶅睘浜庢櫤鑳戒綋鐨勭幆澧冨睘鎬у垎绫?,options:["寮€婧?vs 闂簮","瀹屽叏鍙瀵?vs 閮ㄥ垎鍙瀵?,"闈欐€?vs 鍔ㄦ€?,"纭畾鎬?vs 闅忔満鎬?],answer:"寮€婧?vs 闂簮",explain:"鏅鸿兘浣撶幆澧冨睘鎬у寘鎷彲瑙傚療鎬с€佺‘瀹氭€с€侀潤鎬?鍔ㄦ€佺瓑缁村害锛屽紑婧?闂簮鏄蒋浠跺睘鎬э紝涓嶆槸鐜鍒嗙被銆?,kp:["鏅鸿兘浣撶幆澧冨睘鎬?,"鐜鍒嗙被缁村害"]},
+{id:"Q041",type:"multiple",score:1.5,stem:"琛屼笟澶фā鍨嬮€傞厤鐨勫父瑙佹柟娉曞寘鎷?,options:["鎸囦护寰皟","鏇存崲妯″瀷鏋舵瀯","棰嗗煙鏁版嵁缁х画棰勮缁?,"RAG鐭ヨ瘑搴撳寮?],answer:["鎸囦护寰皟","棰嗗煙鏁版嵁缁х画棰勮缁?,"RAG鐭ヨ瘑搴撳寮?],explain:"琛屼笟澶фā鍨嬮€傞厤甯哥敤鏂规硶鍖呮嫭棰嗗煙鏁版嵁缁х画棰勮缁冦€佹寚浠ゅ井璋冦€丷AG鐭ヨ瘑搴撳寮虹瓑锛屼竴鑸笉闇€瑕佹洿鎹㈡ā鍨嬫灦鏋勩€?,kp:["琛屼笟閫傞厤鏂规硶","棰嗗煙閫傞厤"]},
+{id:"Q042",type:"multiple",score:1.5,stem:"鍗风Н绁炵粡缃戠粶鐨勬牳蹇冪粍浠跺寘鎷?,options:["寰幆灞?,"鍗风Н灞?,"鍏ㄨ繛鎺ュ眰","姹犲寲灞?],answer:["鍗风Н灞?,"鍏ㄨ繛鎺ュ眰","姹犲寲灞?],explain:"CNN鐨勬牳蹇冪粍浠跺寘鎷嵎绉眰(鎻愬彇鐗瑰緛)銆佹睜鍖栧眰(闄嶇淮)鍜屽叏杩炴帴灞?鍒嗙被杈撳嚭)锛屽惊鐜眰鏄疪NN鐨勭粍浠躲€?,kp:["CNN鏍稿績缁勪欢","鍗风Н涓庢睜鍖?]},
+{id:"Q043",type:"multiple",score:1.5,stem:"AI椤圭洰鍏稿瀷鍥㈤槦瑙掕壊鍖呮嫭",options:["绠楁硶宸ョ▼甯?,"寤虹瓚璁捐甯?,"璐㈠姟浼氳甯?,"鏁版嵁宸ョ▼甯?],answer:["绠楁硶宸ョ▼甯?,"鏁版嵁宸ョ▼甯?],explain:"AI椤圭洰鍥㈤槦閫氬父鍖呮嫭绠楁硶宸ョ▼甯堛€佹暟鎹伐绋嬪笀銆佷骇鍝佺粡鐞嗐€佽繍缁村伐绋嬪笀銆佹祴璇曞伐绋嬪笀绛夎鑹层€?,kp:["鍥㈤槦瑙掕壊","绠楁硶涓庢暟鎹伐绋嬪笀"]},
+{id:"Q044",type:"multiple",score:1.5,stem:"Transformer鏋舵瀯鐨勬牳蹇冪粍鎴愬寘鎷?,options:["灞傚綊涓€鍖?,"鍓嶉绁炵粡缃戠粶","娈嬪樊杩炴帴","鑷敞鎰忓姏鏈哄埗"],answer:["灞傚綊涓€鍖?,"鍓嶉绁炵粡缃戠粶","娈嬪樊杩炴帴","鑷敞鎰忓姏鏈哄埗"],explain:"Transformer鐨勬牳蹇冪粍浠跺寘鎷澶磋嚜娉ㄦ剰鍔涙満鍒躲€佸墠棣堢缁忕綉缁溿€佸眰褰掍竴鍖栧拰娈嬪樊杩炴帴銆?,kp:["Transformer鏋舵瀯","鏍稿績缁勪欢"]},
+{id:"Q045",type:"multiple",score:1.5,stem:"鍙傛暟楂樻晥寰皟(PEFT)鏂规硶鍖呮嫭",options:["Prefix Tuning","鍏ㄥ弬鏁板井璋?,"Prompt Tuning","LoRA"],answer:["Prefix Tuning","Prompt Tuning","LoRA"],explain:"LoRA銆丳refix Tuning鍜孭rompt Tuning閮藉睘浜庡弬鏁伴珮鏁堝井璋冩柟娉曘€傚叏鍙傛暟寰皟涓嶅睘浜嶱EFT銆?,kp:["鍙傛暟楂樻晥寰皟","PEFT鏂规硶"]},
+{id:"Q046",type:"multiple",score:1.5,stem:"鎺ㄧ悊鍔犻€熸妧鏈寘鎷?,options:["鎵瑰鐞?,"KV缂撳瓨","绠楀瓙铻嶅悎","妯″瀷骞惰"],answer:["鎵瑰鐞?,"KV缂撳瓨","绠楀瓙铻嶅悎","妯″瀷骞惰"],explain:"鎵瑰鐞嗐€並V缂撳瓨銆佺畻瀛愯瀺鍚堝拰妯″瀷骞惰閮芥槸甯歌鐨勬帹鐞嗗姞閫熸妧鏈€?,kp:["鎺ㄧ悊鍔犻€?,"骞惰璁＄畻"]},
+{id:"Q047",type:"multiple",score:1.5,stem:"妯″瀷鍘嬬缉鎶€鏈寘鎷?,options:["閲忓寲","鏁版嵁澧炲己","鐭ヨ瘑钂搁","鍓灊"],answer:["閲忓寲","鐭ヨ瘑钂搁","鍓灊"],explain:"閲忓寲銆佸壀鏋濆拰鐭ヨ瘑钂搁閮芥槸涓绘祦鐨勬ā鍨嬪帇缂╂妧鏈€傛暟鎹寮烘槸璁粌鎶€鏈紝涓嶅睘浜庢ā鍨嬪帇缂┿€?,kp:["妯″瀷鍘嬬缉鎶€鏈?,"閲忓寲涓庡壀鏋?]},
+{id:"Q048",type:"multiple",score:1.5,stem:"浠ヤ笅灞炰簬娣卞害瀛︿範甯哥敤浼樺寲鍣ㄧ殑鏈?,options:["ReLU","Adam","SGD","RMSprop"],answer:["Adam","SGD","RMSprop"],explain:"SGD銆丄dam鍜孯MSprop閮芥槸甯哥敤鐨勬繁搴﹀涔犱紭鍖栧櫒銆俁eLU鏄縺娲诲嚱鏁帮紝涓嶆槸浼樺寲鍣ㄣ€?,kp:["浼樺寲鍣?,"SGD涓嶢dam"]},
+{id:"Q049",type:"multiple",score:1.5,stem:"浠ヤ笅灞炰簬RAG甯哥敤鐨勫悜閲忔暟鎹簱鐨勬湁",options:["Chroma","Milvus","Pinecone","Weaviate"],answer:["Chroma","Milvus","Pinecone","Weaviate"],explain:"Chroma銆丳inecone銆丮ilvus鍜學eaviate閮芥槸涓绘祦鐨勫悜閲忔暟鎹簱銆?,kp:["鍚戦噺鏁版嵁搴?,"涓绘祦浜у搧"]},
+{id:"Q050",type:"multiple",score:1.5,stem:"鏅鸿兘浣撶殑鏍稿績鐗规€у寘鎷?,options:["鍙嶅簲鎬?,"鑷富鎬?,"涓诲姩鎬?,"绀句細鎬?],answer:["鍙嶅簲鎬?,"鑷富鎬?,"涓诲姩鎬?,"绀句細鎬?],explain:"鏅鸿兘浣撳叿鏈夊洓澶ф牳蹇冪壒鎬э細鑷富鎬с€佸弽搴旀€с€佷富鍔ㄦ€у拰绀句細鎬с€?,kp:["鏅鸿兘浣撴牳蹇冪壒鎬?,"鍥涘ぇ鐗规€?]},
+{id:"Q051",type:"multiple",score:1.5,stem:"AI椤圭洰鏁版嵁鍚堣闇€瑕侀伒瀹堢殑娉曞緥娉曡鍖呮嫭",options:["缃戠粶瀹夊叏娉?,"涓汉淇℃伅淇濇姢娉?,"娑堣垂鑰呮潈鐩婁繚鎶ゆ硶","鏁版嵁瀹夊叏娉?],answer:["缃戠粶瀹夊叏娉?,"涓汉淇℃伅淇濇姢娉?,"娑堣垂鑰呮潈鐩婁繚鎶ゆ硶","鏁版嵁瀹夊叏娉?],explain:"AI椤圭洰鏁版嵁鍚堣闇€閬靛畧銆婁釜浜轰俊鎭繚鎶ゆ硶銆嬨€婃暟鎹畨鍏ㄦ硶銆嬨€婄綉缁滃畨鍏ㄦ硶銆嬬瓑涓撻棬娉曞緥銆?,kp:["鏁版嵁鍚堣娉曡","涓夋硶浣撶郴"]},
+{id:"Q052",type:"multiple",score:1.5,stem:"RAG绯荤粺鐨勫吀鍨嬬粍鎴愰儴鍒嗗寘鎷?,options:["鏂囨。澶勭悊妯″潡","鍚戦噺鏁版嵁搴?,"澶ц瑷€妯″瀷","妫€绱㈡ā鍧?],answer:["鏂囨。澶勭悊妯″潡","鍚戦噺鏁版嵁搴?,"澶ц瑷€妯″瀷","妫€绱㈡ā鍧?],explain:"瀹屾暣鐨凴AG绯荤粺鍖呮嫭鏂囨。澶勭悊銆佸悜閲忔暟鎹簱銆佹绱㈡ā鍧楀拰澶ц瑷€妯″瀷銆?,kp:["RAG绯荤粺缁勬垚","鏋舵瀯妯″潡"]},
+{id:"Q053",type:"multiple",score:1.5,stem:"澶氭櫤鑳戒綋鍗忎綔鐨勫叧閿満鍒跺寘鎷?,options:["鍗忓晢鏈哄埗","鍚勮嚜瀹屽叏鐙珛杩愯","鏃犻渶浠讳綍鍗忚皟鍚屾","閫氫俊鏈哄埗"],answer:["鍗忓晢鏈哄埗","閫氫俊鏈哄埗"],explain:"澶氭櫤鑳戒綋鍗忎綔闇€瑕侀€氫俊鏈哄埗鍜屽崗鍟嗘満鍒朵綔涓哄叧閿満鍒躲€傚悇鑷畬鍏ㄧ嫭绔嬭繍琛屾棤娉曞疄鐜版湁鏁堝崗浣溿€?,kp:["鍗忎綔鏈哄埗","閫氫俊涓庡崗鍟?]},
+{id:"Q054",type:"multiple",score:1.5,stem:"鏅鸿兘浣撶殑鍩烘湰缁勬垚閮ㄥ垎鍖呮嫭",options:["鎺ㄧ悊/鍐崇瓥妯″潡","鐭ヨ瘑搴?,"鎰熺煡妯″潡","鎵ц妯″潡"],answer:["鎺ㄧ悊/鍐崇瓥妯″潡","鐭ヨ瘑搴?,"鎰熺煡妯″潡","鎵ц妯″潡"],explain:"鍏稿瀷鏅鸿兘浣撴灦鏋勫寘鍚劅鐭ユā鍧椼€佹帹鐞?鍐崇瓥妯″潡銆佹墽琛屾ā鍧楀拰鐭ヨ瘑搴撱€?,kp:["鏅鸿兘浣撴灦鏋?,"鍩烘湰缁勬垚妯″潡"]},
+{id:"Q055",type:"multiple",score:1.5,stem:"浼佷笟浣跨敤AI缂栫▼鏅鸿兘浣撻渶瑕佸叧娉ㄧ殑椋庨櫓鍖呮嫭",options:["瀹夊叏婕忔礊椋庨櫓","浠ｇ爜璐ㄩ噺椋庨櫓","浠ｇ爜鐗堟潈椋庨櫓","浠ｇ爜杩愯閫熷害鎻愬崌"],answer:["瀹夊叏婕忔礊椋庨櫓","浠ｇ爜璐ㄩ噺椋庨櫓","浠ｇ爜鐗堟潈椋庨櫓"],explain:"浼佷笟浣跨敤AI缂栫▼鏅鸿兘浣撻渶鍏虫敞浠ｇ爜鐗堟潈銆佸畨鍏ㄦ紡娲炪€佷唬鐮佽川閲忕瓑澶氭柟闈㈤闄┿€備唬鐮佽繍琛岄€熷害鎻愬崌涓嶆槸椋庨櫓銆?,kp:["浼佷笟椋庨櫓绠℃帶","鐭ヨ瘑浜ф潈"]},
+{id:"Q056",type:"multiple",score:1.5,stem:"閫氫俊杩愯惀鍟咥I搴旂敤鐨勫吀鍨嬪満鏅寘鎷?,options:["娆鸿瘓妫€娴?,"鏅鸿兘瀹㈡湇","缃戠粶浼樺寲","鍩虹珯鑺傝兘"],answer:["娆鸿瘓妫€娴?,"鏅鸿兘瀹㈡湇","缃戠粶浼樺寲","鍩虹珯鑺傝兘"],explain:"閫氫俊杩愯惀鍟咥I搴旂敤鍦烘櫙骞挎硾锛屽寘鎷櫤鑳藉鏈嶃€佺綉缁滀紭鍖栥€佸熀绔欒妭鑳姐€佹璇堟娴嬬瓑銆?,kp:["閫氫俊AI鍦烘櫙","杩愯惀鍟嗘暟瀛楀寲"]},
+{id:"Q057",type:"multiple",score:1.5,stem:"澶ц瑷€妯″瀷鐨勫吀鍨嬭兘鍔涘寘鎷?,options:["閫昏緫鎺ㄧ悊","鏂囨湰鐢熸垚","浠ｇ爜鐢熸垚","鏂囨湰鐞嗚В"],answer:["閫昏緫鎺ㄧ悊","鏂囨湰鐢熸垚","浠ｇ爜鐢熸垚","鏂囨湰鐞嗚В"],explain:"澶ц瑷€妯″瀷鍏峰鏂囨湰鐞嗚В銆佹枃鏈敓鎴愩€侀€昏緫鎺ㄧ悊銆佷唬鐮佺敓鎴愮瓑澶氱鑳藉姏銆?,kp:["鑷劧璇█澶勭悊","澶фā鍨嬭兘鍔?]},
+{id:"Q058",type:"multiple",score:1.5,stem:"澶氭櫤鑳戒綋绯荤粺鐨勪紭鍔垮寘鎷?,options:["绯荤粺澶嶆潅搴﹀ぇ骞呴檷浣?,"椴佹鎬у己","閫氫俊寮€閿€鍑犱箮涓洪浂","骞惰澶勭悊鑳藉姏"],answer:["椴佹鎬у己","骞惰澶勭悊鑳藉姏"],explain:"澶氭櫤鑳戒綋绯荤粺鍏锋湁骞惰澶勭悊鑳藉姏寮恒€侀瞾妫掓€уソ绛変紭鍔裤€備絾澶嶆潅搴︽洿楂樹笖鏈夐€氫俊寮€閿€銆?,kp:["澶氭櫤鑳戒綋浼樺娍","骞惰澶勭悊涓庨瞾妫掓€?]},
+{id:"Q059",type:"multiple",score:1.5,stem:"閫氫俊杩愯惀鍟咥I椤圭洰鏂规璁捐闇€鑰冭檻鐨勫叧閿洜绱犲寘鎷?,options:["瀹屽叏涓嶈€冭檻椤圭洰鎴愭湰","鏁版嵁瀹夊叏涓庨殣绉佷繚鎶?,"鍙拷姹傛妧鏈渶鏂版渶鍓嶆部","绠楀姏璧勬簮瑙勫垝"],answer:["鏁版嵁瀹夊叏涓庨殣绉佷繚鎶?,"绠楀姏璧勬簮瑙勫垝"],explain:"AI椤圭洰璁捐闇€缁煎悎鑰冭檻鏁版嵁瀹夊叏涓庨殣绉佷繚鎶ゃ€佺畻鍔涜祫婧愯鍒掔瓑鍏抽敭鍥犵礌銆?,kp:["鏂规璁捐鍥犵礌","鏁版嵁瀹夊叏涓庣畻鍔涜鍒?]},
+{id:"Q060",type:"multiple",score:1.5,stem:"AI缂栫▼鏅鸿兘浣撶殑鍏稿瀷鍔熻兘鍖呮嫭",options:["浠ｇ爜鐢熸垚","浠ｇ爜瀹℃煡","浠ｇ爜琛ュ叏","浠ｇ爜缂栬瘧鎵ц"],answer:["浠ｇ爜鐢熸垚","浠ｇ爜瀹℃煡","浠ｇ爜琛ュ叏"],explain:"AI缂栫▼鏅鸿兘浣撳叿澶囦唬鐮佽ˉ鍏ㄣ€佷唬鐮佺敓鎴愩€佷唬鐮佸鏌ョ瓑鍔熻兘銆備唬鐮佺紪璇戞墽琛屾槸缂栬瘧鍣ㄧ殑鍔熻兘銆?,kp:["AI缂栫▼鍔熻兘","浠ｇ爜鍏ㄧ敓鍛藉懆鏈?]},
+{id:"Q061",type:"truefalse",score:0.5,stem:"绠楁硶宸ョ▼甯堛€佹暟鎹伐绋嬪笀銆佽繍缁村伐绋嬪笀鍧囧睘浜嶢I椤圭洰鏍稿績鍥㈤槦瑙掕壊銆?,options:["瀵?,"閿?],answer:"瀵?,explain:"鏍囧噯AI椤圭洰鍥㈤槦鍖呭惈绠楁硶銆佹暟鎹€佽繍缁淬€佷骇鍝併€佹祴璇曘€侀」鐩粡鐞嗙瓑鏍稿績瑙掕壊銆?,kp:["AI鍥㈤槦鍗忎綔","椤圭洰鏍稿績瑙掕壊"]},
+{id:"Q062",type:"truefalse",score:0.5,stem:"妯″瀷閲忓寲鐨勬牳蹇冪洰鐨勬槸鎻愬崌妯″瀷璁粌绮惧害銆?,options:["瀵?,"閿?],answer:"閿?,explain:"妯″瀷閲忓寲閫氳繃闄嶄綆鍙傛暟鏁板€肩簿搴︼紝瀹炵幇妯″瀷浣撶Н鍘嬬缉銆佹帹鐞嗗姞閫熴€侀檷浣庢樉瀛樺崰鐢紝涓嶄細鎻愬崌妯″瀷绮惧害銆?,kp:["绠楁硶浼樺寲","妯″瀷閲忓寲鎶€鏈?]},
+{id:"Q063",type:"truefalse",score:0.5,stem:"鐭ヨ瘑钂搁涓紝瀛︾敓妯″瀷閫氬父鏄弬鏁伴噺澶с€佹€ц兘寮虹殑鍘熷妯″瀷銆?,options:["瀵?,"閿?],answer:"閿?,explain:"鐭ヨ瘑钂搁涓紝鏁欏笀妯″瀷鏄弬鏁伴噺澶с€佹€ц兘寮虹殑鍘熷妯″瀷锛屽鐢熸ā鍨嬫槸灏忚€屽揩鐨勬ā鍨嬨€?,kp:["鐭ヨ瘑钂搁","鏁欏笀-瀛︾敓妯″瀷"]},
+{id:"Q064",type:"truefalse",score:0.5,stem:"AI缂栫▼鏅鸿兘浣撳彲浠ョ嫭绔嬪畬鎴愪唬鐮佺敓鎴愩€佷唬鐮佸鏌ャ€丅ug璋冭瘯绛夊叏娴佺▼缂栫▼杈呭姪宸ヤ綔銆?,options:["瀵?,"閿?],answer:"瀵?,explain:"涓绘祦AI缂栫▼鏅鸿兘浣撳叿澶囦唬鐮佽ˉ鍏ㄣ€佹壒閲忎唬鐮佺敓鎴愩€佷唬鐮佸悎瑙勫鏌ャ€佽嚜鍔ㄨ皟璇曚慨澶嶇瓑鍏ㄦ祦绋嬭緟鍔╄兘鍔涖€?,kp:["AI缂栫▼鏅鸿兘浣?,"鏍稿績鍔熻兘鍦烘櫙"]},
+{id:"Q065",type:"truefalse",score:0.5,stem:"AI椤圭洰鏁版嵁鍑嗗闃舵锛屾暟鎹爣娉ㄣ€佹暟鎹竻娲楀睘浜庢牳蹇冨伐浣滐紝妯″瀷璁粌涓嶅睘浜庤闃舵銆?,options:["瀵?,"閿?],answer:"瀵?,explain:"鏁版嵁鍑嗗闃舵鏍稿績涓烘暟鎹噰闆嗐€佹竻娲椼€佹爣娉ㄣ€佸寮猴紝妯″瀷璁粌灞炰簬鍚庣画妯″瀷寮€鍙戦樁娈点€?,kp:["AI椤圭洰鍏ㄧ敓鍛藉懆鏈?,"闃舵宸ヤ綔鍒掑垎"]},
+{id:"Q066",type:"truefalse",score:0.5,stem:"AI椤圭洰涓殑鍚堣椋庨櫓锛屼粎鍖呭惈鏁版嵁闅愮椋庨櫓锛屾棤绠楁硶浼︾悊椋庨櫓銆?,options:["瀵?,"閿?],answer:"閿?,explain:"AI椤圭洰鍚堣椋庨櫓娑电洊鏁版嵁鍚堣銆佺畻娉曚鸡鐞嗐€佺煡璇嗕骇鏉冦€佺綉缁滃畨鍏ㄣ€佷笟鍔″悎瑙勭瓑澶氱淮搴︺€?,kp:["椋庨櫓绠℃帶","AI澶氱淮搴﹀悎瑙勯闄?]},
+{id:"Q067",type:"truefalse",score:0.5,stem:"AI椤圭洰璐ㄩ噺绠＄悊浠呴渶瑕佺鎺фā鍨嬬簿搴︼紝鏃犻渶鍏虫敞鏁版嵁璐ㄩ噺鍜屼唬鐮佽川閲忋€?,options:["瀵?,"閿?],answer:"閿?,explain:"AI椤圭洰鍏ㄧ淮搴﹁川閲忕鐞嗗寘鍚暟鎹川閲忋€佹ā鍨嬭川閲忋€佷唬鐮佽川閲忋€佹枃妗ｈ川閲忓洓澶ф牳蹇冩ā鍧椼€?,kp:["AI椤圭洰绠℃帶","鍏ㄦ祦绋嬭川閲忕鐞?]},
+{id:"Q068",type:"truefalse",score:0.5,stem:"LoRA鍙傛暟楂樻晥寰皟闇€瑕佸喕缁撳ぇ妯″瀷涓讳綋鍙傛暟锛屼粎璁粌灏戦噺浣庣З鐭╅樀鍙傛暟銆?,options:["瀵?,"閿?],answer:"瀵?,explain:"LoRA鏄吀鍨婸EFT鎶€鏈紝鏍稿績鍘熺悊涓哄喕缁撻璁粌妯″瀷鍏ㄩ儴鍘熷鍙傛暟锛屼粎璁粌灏戦噺浣庣З閫傞厤鐭╅樀銆?,kp:["澶фā鍨嬪井璋?,"LoRA寰皟鍘熺悊"]},
+{id:"Q069",type:"truefalse",score:0.5,stem:"澶фā鍨嬫秾鐜拌兘鍔涗粎涓庢ā鍨嬪弬鏁伴噺澶у皬鐩稿叧锛屼笌璁粌鏁版嵁璐ㄩ噺鏃犲叧銆?,options:["瀵?,"閿?],answer:"閿?,explain:"澶фā鍨嬫秾鐜拌兘鍔涙槸鍙傛暟閲忋€佽缁冩暟鎹妯°€佹暟鎹川閲忋€佽缁冩柟寮忕瓑澶氬洜绱犲叡鍚屼綔鐢ㄧ殑缁撴灉銆?,kp:["AI澶фā鍨?,"娑岀幇鑳藉姏褰卞搷鍥犵礌"]},
+{id:"Q070",type:"truefalse",score:0.5,stem:"鏅鸿兘浣撶殑鏍稿績鑷富鎬х壒寰侊紝鏄寚鏅鸿兘浣撴棤闇€浜哄伐骞查锛屽彲鑷富鎰熺煡鐜骞跺畬鎴愮洰鏍囧喅绛栥€?,options:["瀵?,"閿?],answer:"瀵?,explain:"鑷富鎬ф槸鏅鸿兘浣撴渶鏍稿績鐨勭壒寰侊紝鍖哄埆浜庝紶缁熻鍔ㄦ墽琛岀▼搴忋€?,kp:["鏅鸿兘浣撴牳蹇冪壒寰?,"鑷富鎬у師鐞?]},
+{id:"Q071",type:"truefalse",score:0.5,stem:"RAG閲嶆帓搴忔ā鍧楃殑浣滅敤鏄鍒濈瓫妫€绱㈢粨鏋滄寜鐩稿叧鎬т簩娆℃嫨浼橈紝鎻愬崌闂瓟绮惧噯搴︺€?,options:["瀵?,"閿?],answer:"瀵?,explain:"RAG妫€绱㈠垵绛涚粨鏋滃瓨鍦ㄥ啑浣欍€佺浉鍏虫€т笉瓒抽棶棰橈紝閲嶆帓搴忔ā鍨嬪彲瀵圭粨鏋滅簿鍑嗘墦鍒嗘帓搴忋€?,kp:["RAG妗嗘灦","閲嶆帓搴忎紭鍖栨満鍒?]},
+{id:"Q072",type:"truefalse",score:0.5,stem:"ReLU婵€娲诲嚱鏁拌兘澶熸湁鏁堢紦瑙ｆ繁灞傜缁忕綉缁滅殑姊害娑堝け闂銆?,options:["瀵?,"閿?],answer:"瀵?,explain:"ReLU鍦ㄦ鏁板尯闂存搴︽亽涓?锛岄伩鍏嶄簡Sigmoid銆乀anh鍑芥暟鐨勬搴﹂ケ鍜岄棶棰樸€?,kp:["娣卞害瀛︿範鍩虹","婵€娲诲嚱鏁扮壒鎬?]},
+{id:"Q073",type:"truefalse",score:0.5,stem:'绠€鍗曞弽灏勬櫤鑳戒綋鍩轰簬"鏉′欢-鍔ㄤ綔"瑙勫垯杩涜鍐崇瓥锛屼細鑰冭檻鍘嗗彶鎰熺煡淇℃伅銆?,options:["瀵?,"閿?],answer:"閿?,explain:"绠€鍗曞弽灏勬櫤鑳戒綋浠呮牴鎹綋鍓嶆劅鐭ョ洿鎺ラ€夋嫨鍔ㄤ綔锛屼笉鑰冭檻鍘嗗彶鎰熺煡淇℃伅銆?,kp:["绠€鍗曞弽灏勬櫤鑳戒綋","鏅鸿兘浣撶被鍨?]},
+{id:"Q074",type:"truefalse",score:0.5,stem:"RAG鎶€鏈彲浠ュ交搴曟秷闄ゅぇ璇█妯″瀷鐨勬墍鏈夊够瑙夐棶棰樸€?,options:["瀵?,"閿?],answer:"閿?,explain:"RAG鍙ぇ骞呴檷浣庡ぇ妯″瀷骞昏姒傜巼锛屼絾鍙楁绱㈢簿搴︺€佹枃妗ｈ川閲忓奖鍝嶏紝鏃犳硶褰诲簳鏍归櫎骞昏闂銆?,kp:["RAG鎶€鏈壒鎬?,"澶фā鍨嬪够瑙変紭鍖?]},
+{id:"Q075",type:"truefalse",score:0.5,stem:"Prompt Engineering(鎻愮ず宸ョ▼)閫氳繃淇敼妯″瀷鍙傛暟鏉ユ彁鍗囧ぇ妯″瀷杈撳嚭璐ㄩ噺銆?,options:["瀵?,"閿?],answer:"閿?,explain:"鎻愮ず宸ョ▼閫氳繃璁捐鍜屼紭鍖栬緭鍏ユ彁绀鸿瘝鏉ュ紩瀵煎ぇ妯″瀷浜у嚭鏇村ソ缁撴灉锛屼笉淇敼妯″瀷鍙傛暟銆?,kp:["鎻愮ず宸ョ▼","Prompt浼樺寲"]},
+{id:"Q076",type:"truefalse",score:0.5,stem:"妯″瀷杩唬鐨勫悎鐞嗚Е鍙戝満鏅寘鍚笟鍔￠渶姹傚彉鏇淬€佹ā鍨嬫晥鏋滆“鍑忋€佽涓氱畻娉曟妧鏈崌绾с€?,options:["瀵?,"閿?],answer:"瀵?,explain:"褰撲笟鍔￠渶姹傝皟鏁淬€佹ā鍨嬪嚭鐜版紓绉绘€ц兘涓嬮檷銆佸墠娌跨畻娉曞彲浼樺寲鐜版湁妯″瀷鏃讹紝鍧囬渶瑕佸惎鍔ㄦā鍨嬭凯浠ｃ€?,kp:["妯″瀷杩唬","杩唬瑙﹀彂鏈哄埗"]},
+{id:"Q077",type:"truefalse",score:0.5,stem:"澶氭櫤鑳戒綋鍒嗗竷寮忓崗浣滄ā寮忎緷璧栦腑蹇冭妭鐐圭粺涓€璋冨害锛岀伒娲绘€ц緝宸€?,options:["瀵?,"閿?],answer:"閿?,explain:"鍒嗗竷寮忓鏅鸿兘浣撳崗浣滄棤涓績绠℃帶鑺傜偣锛屽悇鏅鸿兘浣撳绛夊崗鍟嗐€佽嚜涓诲崗浣滐紝鍏峰楂樼伒娲绘€с€?,kp:["澶氭櫤鑳戒綋鍗忎綔","鍒嗗竷寮忓崗浣滄ā寮?]},
+{id:"Q078",type:"truefalse",score:0.5,stem:"AI椤圭洰浜や粯绠℃帶涓紝杩涘害绠＄悊銆侀闄╃鐞嗐€佹垚鏈鐞嗗潎涓烘牳蹇冪鎺х幆鑺傘€?,options:["瀵?,"閿?],answer:"瀵?,explain:"瀹屾暣鐨凙I椤圭洰浜や粯绠℃帶浣撶郴娑电洊杩涘害銆佽川閲忋€侀闄┿€佹垚鏈€佽寖鍥翠簲澶ф牳蹇冪鐞嗙淮搴︺€?,kp:["椤圭洰浜や粯绠℃帶","澶氱淮搴︾鐞嗕綋绯?]},
+{id:"Q079",type:"truefalse",score:0.5,stem:"绔竟浜戝崗鍚屾灦鏋勪腑锛岃竟缂樿妭鐐逛富瑕佽礋璐ｆ捣閲忔暟鎹暱鏈熷瓨鍌ㄥ拰鍏ㄩ噺妯″瀷璁粌銆?,options:["瀵?,"閿?],answer:"閿?,explain:"杈圭紭鑺傜偣涓绘墦浣庡欢杩熷疄鏃舵帹鐞嗐€佹暟鎹澶勭悊锛涗簯绔礋璐ｆ捣閲忔暟鎹瓨鍌ㄣ€佸叏閲忔ā鍨嬭缁冦€?,kp:["杩愯惀鍟咥I鏋舵瀯","绔竟浜戝崗鍚屽師鐞?]},
+{id:"Q080",type:"truefalse",score:0.5,stem:"鍚戦噺鏁版嵁搴撲富瑕佺敤浜庡瓨鍌ㄧ粨鏋勫寲鏁版嵁锛屾敮鎸丼QL鏌ヨ鎿嶄綔銆?,options:["瀵?,"閿?],answer:"閿?,explain:"鍚戦噺鏁版嵁搴撲笓闂ㄧ敤浜庡瓨鍌ㄩ珮缁村悜閲?Embedding)锛屾敮鎸佸熀浜庣浉浼煎害鐨勫揩閫熸绱紝涓嶇敤浜嶴QL鏌ヨ銆?,kp:["鍚戦噺鏁版嵁搴?,"鐩镐技搴︽绱?]},
+{id:"Q081",type:"short",score:5,stem:"璇风畝杩癆I椤圭洰鍏ㄧ敓鍛藉懆鏈熺殑涓昏闃舵鍙婂悇闃舵鐨勬牳蹇冨伐浣滃唴瀹广€?,answer:"AI椤圭洰鍏ㄧ敓鍛藉懆鏈熶富瑕佸寘鎷互涓嬮樁娈碉細(1)闇€姹傚垎鏋愰樁娈碉細鏄庣‘涓氬姟鐩爣銆侀棶棰樺畾涔夈€佹垚鍔熸爣鍑嗗拰璇勪及鎸囨爣锛岃繘琛屽彲琛屾€у垎鏋愬拰浠峰€艰瘎浼般€?2)鏁版嵁鍑嗗闃舵锛氭暟鎹噰闆嗐€佹暟鎹竻娲椼€佹暟鎹爣娉ㄣ€佹暟鎹寮恒€佹暟鎹泦鍒掑垎锛屾瀯寤洪珮璐ㄩ噺鐨勮缁冩暟鎹泦銆?3)妯″瀷寮€鍙戦樁娈碉細绠楁硶閫夊瀷銆佹ā鍨嬭璁°€佹ā鍨嬭缁冦€佽皟鍙備紭鍖栥€佹ā鍨嬭瘎浼帮紝杩唬浼樺寲妯″瀷鎬ц兘銆?4)娴嬭瘯璇勪及闃舵锛氬湪娴嬭瘯闆嗕笂鍏ㄩ潰璇勪及妯″瀷鎬ц兘锛岃繘琛屽帇鍔涙祴璇曘€佸畨鍏ㄦ祴璇曘€佽竟鐣屾祴璇曪紝楠岃瘉鏄惁杈惧埌楠屾敹鏍囧噯銆?5)閮ㄧ讲涓婄嚎闃舵锛氭ā鍨嬪皝瑁呫€侀儴缃茬幆澧冩惌寤恒€佺郴缁熼泦鎴愩€佺伆搴﹀彂甯冿紝灏嗘ā鍨嬮儴缃插埌鐢熶骇鐜銆?6)杩愮淮杩唬闃舵锛氱郴缁熺洃鎺с€佹€ц兘缁存姢銆佹暟鎹紓绉绘娴嬨€佹ā鍨嬭凯浠ｆ洿鏂帮紝鎸佺画浼樺寲妯″瀷鏁堟灉鍜岀郴缁熺ǔ瀹氭€с€?7)椤圭洰鏀跺熬闃舵锛氶」鐩獙鏀躲€佺煡璇嗚浆绉汇€佹枃妗ｅ綊妗ｃ€佺粡楠屾€荤粨锛屽畬鎴愰」鐩氦浠樸€?,explain:"鏈鍥寸粫AI椤圭洰鍏ㄧ敓鍛藉懆鏈熺殑闃舵鍒掑垎鍜屾牳蹇冨伐浣滃唴瀹瑰睍寮€銆?,kp:["AI椤圭洰鐢熷懡鍛ㄦ湡","闃舵鍒掑垎","鏍稿績宸ヤ綔鍐呭"]},
+{id:"Q082",type:"short",score:5,stem:"璇风畝杩癡ibe Coding鐨勬牳蹇冨畾涔夛紝骞跺垎鐐硅鏄庡叾涓夊ぇ鏍稿績鐞嗗康涓庝笁澶т环鍊煎奖鍝嶃€?,answer:"鏍稿績瀹氫箟锛歏ibe Coding鏄疉ndrej Karpathy鎻愬嚭鐨勫叏鏂癆I缂栫▼鑼冨紡銆傚紑鍙戣€呰韩浠戒粠"浠ｇ爜缂栧啓鑰?褰诲簳杞彉涓?鎰忓浘闃愯堪鑰?鍜?缁撴灉楠屾敹鑰?锛屼笉鐢ㄦ墜鍔ㄧ紪鍐欏叿浣撲唬鐮侊紝渚濋潬鑷劧璇█鍚慉I璇存槑鍔熻兘鐩爣銆侀鏈熸晥鏋滐紝灏辫兘楂樻晥瀹屾垚搴旂敤鎼缓銆備笁澶ф牳蹇冪悊蹇碉細1.鎰忓浘椹卞姩锛氫粠鎸囦护鍒拌瘔姹傘€備娇鐢ㄨ€呯敤鑷劧璇█鎻忚堪鏈€缁堟兂瑕佸疄鐜扮殑鏁堟灉锛屼笉鐢ㄨ鏄庝唬鐮佺紪鍐欐柟寮忥紝搴曞眰璇硶銆佽惤鍦扮粏鑺備氦鐢盇I澶勭悊锛屽洖褰掔紪绋嬭В鍐冲疄闄呴棶棰樼殑鏈川銆?.娌夋蹈寮忚凯浠ｏ細鏋侀€熷弽棣堥棴鐜€傚舰鎴?鎻忚堪-鐢熸垚-楠岃瘉-璋冧紭"瀹屾暣闂幆锛屼娇鐢ㄨ€呭彲浠ョ敤鑷劧璇█闅忔椂鎻愬嚭淇敼闇€姹傦紝澶у箙鍘嬬缉璋冭瘯楠岃瘉鐨勬椂闂淬€?.鎶借薄璺冨崌锛氳仛鐒︿笟鍔￠€昏緫銆傚紑鍙戞搷浣滅殑鏈€灏忓崟鍏冧粠鍑芥暟銆佸彉閲忓崌绾т负鍔熻兘妯″潡銆佷笟鍔″満鏅紝鏂逛究寮€鍙戣€呮妸绮惧姏鏀惧湪绯荤粺鏋舵瀯銆侀《灞傛暣浣撹璁′笂銆備笁澶т环鍊间笌褰卞搷锛?.鏁堢巼闈╁懡锛氶噴鏀惧垱閫犲姏銆傜紪鐮佹晥鐜囨垚鍊嶆彁鍗囷紝寮€鍙戣€呭彲浠ヤ笓娉ㄦ灦鏋勮璁°€侀€昏緫浼樺寲绛夊垱閫犳€у伐浣溿€?.缂栫▼姘戜富鍖栵細浜轰汉鐨嗗彲寮€鍙戙€傛墦鐮寸紪绋嬩笓涓氶棬妲涳紝鏃犳妧鏈熀纭€鐨勪汉鍛樹篃鑳戒緷闈犺嚜鐒惰瑷€鎼缓搴旂敤銆?.娴佺▼閲嶅锛氭瀬鑷存晱鎹峰崗浣溿€傛敼鍙樹紶缁熺€戝竷寮忓紑鍙戞ā寮忥紝閲嶆瀯闇€姹傘€佸紑鍙戙€佹祴璇曠殑鍗忎綔鏂瑰紡锛岀伒娲绘€ф洿寮恒€?,explain:"鏈鍥寸粫Vibe Coding瀹屾暣鐭ヨ瘑妗嗘灦鍑洪锛岃鐩栧畾涔夈€佹牳蹇冪悊蹇点€佷环鍊间笁灞傚叧閿唴瀹广€?,kp:["Vibe Coding姒傚康瀹氫箟","涓夊ぇ鏍稿績鐞嗗康","浠峰€间笌琛屼笟褰卞搷","鑷劧璇█缂栫▼鑼冨紡"]},
+{id:"Q083",type:"short",score:5,stem:"璇风畝杩癛AG(妫€绱㈠寮虹敓鎴?鐨勫熀鏈伐浣滄祦绋嬶紝骞惰鏄庡叾鐩告瘮绾敓鎴愬紡澶фā鍨嬬殑浼樺娍銆?,answer:"RAG鐨勫熀鏈伐浣滄祦绋嬪寘鎷細(1)绂荤嚎闃舵锛氬皢鏂囨。杩涜鍒嗗潡澶勭悊锛岄€氳繃Embedding妯″瀷杞崲涓哄悜閲忚〃绀猴紝瀛樺偍鍒板悜閲忔暟鎹簱涓€?2)鍦ㄧ嚎闃舵锛氱敤鎴锋彁闂悗锛屽厛灏嗛棶棰樿浆鎹负鍚戦噺锛屽湪鍚戦噺鏁版嵁搴撲腑妫€绱㈡渶鐩稿叧鐨勬枃妗ｇ墖娈点€?3)灏嗘绱㈠埌鐨勭浉鍏虫枃妗ｄ笌鐢ㄦ埛闂涓€璧蜂綔涓轰笂涓嬫枃杈撳叆缁欏ぇ璇█妯″瀷銆?4)澶фā鍨嬪熀浜庢绱㈠埌鐨勭煡璇嗙敓鎴愬噯纭殑鍥炵瓟銆傜浉姣旂函鐢熸垚寮忓ぇ妯″瀷鐨勪紭鍔匡細(1)瑙ｅ喅鐭ヨ瘑鏃舵晥鎬ч棶棰橈細鍙互瀹炴椂鏇存柊鐭ヨ瘑搴擄紝鑾峰彇鏈€鏂颁俊鎭€?2)鍑忓皯骞昏闂锛氬熀浜庣湡瀹炴枃妗ｇ敓鎴愬洖绛旓紝鎻愰珮浜嬪疄鍑嗙‘鎬с€?3)鏀寔绉佹湁鐭ヨ瘑锛氬彲浠ユ帴鍏ヤ紒涓氬唴閮ㄦ枃妗ｅ拰涓撴湁鐭ヨ瘑銆?4)鍙拷婧€э細鍥炵瓟鏉ユ簮鍙拷婧埌鍏蜂綋鏂囨。銆?5)鎴愭湰鏇翠綆锛氱浉姣斿叏閲忓井璋冿紝RAG瀹炵幇棰嗗煙鐭ヨ瘑娉ㄥ叆鐨勬垚鏈洿浣庛€?,explain:"鏈瑕嗙洊RAG宸ヤ綔娴佺▼鍜屼紭鍔夸袱涓淮搴︺€?,kp:["妫€绱㈠寮虹敓鎴?,"RAG鎶€鏈紭鍔?,"RAG宸ヤ綔娴佺▼"]},
+{id:"Q084",type:"short",score:5,stem:"璇锋弿杩颁竴涓婭MA鐨勫熀鏈蹇碉紝骞剁畝杩板畠鍖呭惈鐨勪笁澶ф牳蹇冨姛鑳芥ā鍧楀強鍚勮嚜浣滅敤銆?,answer:"IMA鍏ㄧО涓篿ntelligent memory assistant锛屽嵆鏅鸿兘璁板繂鍔╂墜锛屾槸鑵捐鎺ㄥ嚭鐨凙I椹卞姩鐭ヨ瘑绠＄悊宸ュ叿锛岀敤浜庢惌寤轰釜浜轰笌鍥㈤槦鐨?绗簩澶ц剳"銆備笁澶ф牳蹇冨姛鑳芥ā鍧楋細(1)涓汉鐭ヨ瘑搴擄細绉佷汉涓撳睘鐭ヨ瘑绌洪棿锛岀敤鏉ュ瓨鏀句釜浜烘枃妗ｃ€佺瑪璁般€佺綉椤电瓑鍚勭被璧勬枡銆?2)鍏变韩鐭ヨ瘑搴擄細闈㈠悜鍥㈤槦鍗忎綔鐨勭煡璇嗙┖闂达紝鏀寔閰嶇疆鎴愬憳璁块棶鏉冮檺銆佹垚鍛樺姞鍏ユ柟寮忋€?3)璁㈤槄鐭ヨ瘑搴擄細鏀寔璁㈤槄鍏朵粬浜哄澶栧垎浜殑鍏紑鐭ヨ瘑搴撱€?,explain:"鏈瀹屾暣瑕嗙洊IMA鍩虹瀹氫箟涓庝笁澶у姛鑳芥ā鍧椼€?,kp:["IMA鍩虹姒傚康"]},
+{id:"Q085",type:"short",score:5,stem:"璇风畝杩伴珮璐ㄩ噺锛堥珮绾э級鎻愮ず璇嶇殑5涓牳蹇冪粍鎴愰儴鍒嗭紝骞惰鏄庡悇閮ㄥ垎鐨勪綔鐢ㄣ€?,answer:"楂樼骇鎻愮ず璇嶅寘鍚?涓己涓€涓嶅彲鐨勬牳蹇冪粍鎴愶紝鍚勯儴鍒嗕綔鐢ㄥ涓嬶細1.瑙掕壊锛氭寚瀹欰I鍥炲簲鐨勮韩浠藉畾浣嶏紝鍐冲畾浜咥I杈撳嚭鍐呭鐨勮姘斻€佸垏鍏ヨ瑙掋€佷笓涓氱▼搴︺€?.浠诲姟锛氭槑纭渶瑕丄I瀹屾垚鐨勫叿浣撲簨椤癸紝娓呮櫚鐣屽畾鏈€缁堢殑鐩爣涓庝骇鍑鸿姹傘€?.鑳屾櫙锛氭彁渚涚粰AI浣滅瓟鍙傝€冪殑鍦烘櫙銆佺浉鍏宠祫鏂?涓婁笅鏂囦俊鎭紝璁〢I鍩轰簬缁欏畾鍓嶆彁鐢熸垚鍐呭锛岄伩鍏嶈劚绂婚渶姹傘€?.瑙勫垯锛氭槑纭瓵I鐢熸垚鍐呭蹇呴』閬靛畧鐨勯檺鍒舵潯浠讹紙濡傜瘒骞呫€佸悎瑙勮姹傘€佺姝㈠嚭鐜扮殑鍐呭绛夛級锛岀敤鏉ョ害鏉烝I鐨勮涓鸿竟鐣屻€?.鏍煎紡锛氳瀹欰I杈撳嚭鍐呭鐨勭粨鏋勩€佸憟鐜版柟寮忥紙濡傚垎鐐瑰垪琛ㄣ€佽〃鏍笺€佸浐瀹氭ā鏉跨瓑锛夛紝璁╃粨鏋滅洿鎺ラ€傞厤浣跨敤闇€姹傘€傚畬鏁磋鐩栬繖浜旇绱犵殑鎻愮ず璇嶏紝鑳借AI鏇寸悊瑙ｉ渶姹傦紝杈撳嚭缁撴灉鏇寸ǔ瀹氥€佹洿鍙帶銆?,explain:"鏈鑰冩煡楂樼骇鎻愮ず璇嶇殑浜旇绱犵粨鏋勩€?,kp:["鎻愮ず璇嶅伐绋?,"楂樿川閲忔彁绀鸿瘝","浜旇绱?],pred:true},
+{id:"Q086",type:"short",score:5,stem:"璇风畝杩板洓绉嶅父瑙佺殑AI浜у搧褰㈡€侊紙缃戠珯銆佹櫤鑳戒綋銆丼kill銆佸皬绋嬪簭锛夊垎鍒睘浜庝粈涔堢被鍨嬬殑浜у搧锛屽苟鍒椾妇瀹冧滑鐨勬牳蹇冪壒鐐逛笌搴旂敤鍦烘櫙銆?,answer:"鍥涚AI浜у搧褰㈡€佺殑绫诲瀷銆佹牳蹇冪壒鐐逛笌搴旂敤鍦烘櫙濡備笅锛?.缃戠珯锛圵ebsite锛夆€斺€斿睍绀哄瀷浜у搧銆傚舰寮忥細HTML鍗曢〉鎴栧簲鐢紱鐗圭偣锛氫綆鎴愭湰銆侀珮鍙鎬э紱鍦烘櫙锛氶€傚悎淇℃伅灞曠ず锛堝浼佷笟浠嬬粛銆佷骇鍝佹墜鍐岋級銆佽〃鍗曚氦浜掞紙濡傝皟鐮旈棶鍗枫€佹姤鍚嶈〃鍗曪級銆?.鏅鸿兘浣擄紙Agent锛夆€斺€斿璇濆瀷浜у搧銆傚舰寮忥細璇█浜や簰涓轰富锛涚壒鐐癸細浣庢垚鏈€佹棤闇€椤甸潰璁捐锛涘満鏅細閫傚悎闂瓟鏈嶅姟锛堝鐭ヨ瘑鍜ㄨ銆佸鏈嶇瓟鐤戯級銆佹祦绋嬫寚瀵硷紙濡傛搷浣滄楠ゅ紩瀵笺€佹斂绛栬В璇伙級銆?.Skill锛堟妧鑳藉崟鍏冿級鈥斺€斿伐鍏峰瀷浜у搧銆傚舰寮忥細鍗曚竴浠诲姟鑷姩鍖栵紱鐗圭偣锛氬彲鎷嗚В銆佸彲缁勫悎锛涘満鏅細閫傚悎鎵ц鍏蜂綋鍔熻兘锛堝鏁版嵁鎵归噺澶勭悊銆佹枃浠舵牸寮忚浆鎹級銆?.灏忕▼搴?APP鈥斺€旂Щ鍔ㄥ瀷浜у搧銆傚舰寮忥細寰俊鐢熸€佸叆鍙ｏ紙鎴栫嫭绔婣PP锛夛紱鐗圭偣锛氱Щ鍔ㄤ綆鎴愭湰銆佹湁骞冲彴淇濋殰锛涘満鏅細閫傚悎杞婚噺绉诲姩鏈嶅姟锛堝绉诲姩鍔炲叕銆佺敓娲绘湇鍔℃煡璇級銆?,explain:"鏈鑰冩煡鍥涚AI浜у搧褰㈡€佺殑鍒嗙被涓庣壒鐐广€?,kp:["AI浜у搧褰㈡€?,"缃戠珯","鏅鸿兘浣?,"Skill","灏忕▼搴?],pred:true}
+];
+
+// ===== Storage =====
+const SP='det_quiz_';
+function save(k,v){try{localStorage.setItem(SP+k,JSON.stringify(v))}catch(e){showToast('瀛樺偍澶辫触锛?+e.message)}}
+function load(k,d){try{var v=localStorage.getItem(SP+k);return v?JSON.parse(v):d}catch(e){return d}}
+
+// ===== Settings =====
+var settings=load('settings',{shuffleQ:true,shuffleO:true,apiUrl:'',apiKey:'',model:''});
+function saveSettings(){save('settings',settings)}
+function toggleSetting(key,el){settings[key]=!settings[key];el.classList.toggle('on',settings[key]);saveSettings()}
+
+// ===== State =====
+var practiceState=null;var examState=null;var examTimer=null;
+
+// ===== Utils =====
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function formatTime(sec){var h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return (h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s}
+function formatDuration(sec){var m=Math.floor(sec/60),s=sec%60;return m+'鍒?+s+'绉?}
+function getQ(id){return QUESTIONS.find(function(q){return q.id===id})}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
+function showModal(html){var m=document.getElementById('modal');document.getElementById('modal-content').innerHTML=html;m.classList.add('show')}
+function hideModal(){document.getElementById('modal').classList.remove('show')}
+function typeLabel(t){return {single:'鍗曢€夐',multiple:'澶氶€夐',truefalse:'鍒ゆ柇棰?,short:'绠€绛旈'}[t]}
+function typeTag(t){return '<span class="tag tag-'+t+'">'+typeLabel(t)+'</span>'}
+
+// ===== Navigation =====
+function navigate(view){
+document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active')});
+var target=document.getElementById('view-'+view);if(target)target.classList.add('active');
+if(view==='home')renderHome();
+if(view==='practice-select')renderPracticeSelect();
+if(view==='error-book')renderErrorBook();
+if(view==='stats')renderStats();
+if(view==='settings')renderSettings();
+}
+
+// ===== Home =====
+function renderHome(){
+var pr=load('practice_records',[]),er=load('exam_records',[]),eb=load('error_book',[]);
+var activeErrors=eb.filter(function(e){return e.isActive});
+var totalQ=0,totalC=0;
+pr.forEach(function(r){totalQ+=r.totalQuestions;totalC+=r.correctCount});
+er.forEach(function(r){totalQ+=r.totalQuestions;totalC+=r.correctCount});
+var acc=totalQ>0?Math.round(totalC/totalQ*100):0;
+document.getElementById('home-stats').innerHTML=
+'<div class="stat-item"><div class="num">'+pr.length+'</div><div class="label">缁冧範娆℃暟</div></div>'+
+'<div class="stat-item"><div class="num">'+er.length+'</div><div class="label">鑰冭瘯娆℃暟</div></div>'+
+'<div class="stat-item"><div class="num">'+acc+'%</div><div class="label">骞冲潎姝ｇ‘鐜?/div></div>'+
+'<div class="stat-item"><div class="num">'+activeErrors.length+'</div><div class="label">寰呭涔犻敊棰?/div></div>';
+document.getElementById('error-count-display').textContent=activeErrors.length+'閬撻敊棰樺緟澶嶄範';
+}
+
+// ===== Practice =====
+function renderPracticeSelect(){
+var counts={single:0,multiple:0,truefalse:0,short:0};
+QUESTIONS.forEach(function(q){if(counts[q.type]!==undefined)counts[q.type]++});
+var eb=load('error_book',[]);var errorCount=eb.filter(function(e){return e.isActive}).length;
+var html='';
+var types=[
+{key:'single',icon:'馃敇',name:'鍗曢€変笓椤?,count:counts.single},
+{key:'multiple',icon:'鈽戯笍',name:'澶氶€変笓椤?,count:counts.multiple},
+{key:'truefalse',icon:'鉁?,name:'鍒ゆ柇涓撻」',count:counts.truefalse},
+{key:'short',icon:'鉁忥笍',name:'绠€绛斾笓椤?,count:counts.short},
+{key:'error',icon:'鉂?,name:'閿欓閲嶅埛',count:errorCount,disabled:errorCount===0},
+{key:'mixed',icon:'馃攢',name:'闅忔満娣峰悎',count:86}
+];
+types.forEach(function(t){
+html+='<div class="btn'+(t.disabled?' disabled':'')"'+(t.disabled?'':(' onclick="startPractice(\''+t.key+'\')"'))+'>'+
+'<div class="icon">'+t.icon+'</div><div class="title">'+t.name+'</div>'+
+'<div class="desc">'+(t.count!==undefined?t.count:'')+'棰?/div></div>';
+});
+document.getElementById('practice-types').innerHTML=html;
+}
+
+function startPractice(type){
+var questionIds=[];
+if(type==='mixed'){questionIds=QUESTIONS.map(function(q){return q.id})}
+else if(type==='error'){var eb=load('error_book',[]);questionIds=eb.filter(function(e){return e.isActive}).map(function(e){return e.questionId})}
+else{questionIds=QUESTIONS.filter(function(q){return q.type===type}).map(function(q){return q.id})}
+if(questionIds.length===0){showToast('娌℃湁棰樼洰');return}
+if(settings.shuffleQ)questionIds=shuffle(questionIds);
+var shuffledOptions={};
+if(settings.shuffleO){
+questionIds.forEach(function(qid){
+var q=getQ(qid);if(q.options&&q.options.length>1){
+var indices=shuffle(q.options.map(function(_,i){return i}));
+shuffledOptions[qid]=indices;
+}
+});
+}
+practiceState={type:type,questionIds:questionIds,shuffledOptions:shuffledOptions,currentIndex:0,results:[],startTime:Date.now(),isErrorPractice:type==='error'};
+navigate('quiz');
+renderQuiz();
+}
+
+function renderQuiz(){
+var q=getQ(practiceState.questionIds[practiceState.currentIndex]);
+var idx=practiceState.currentIndex,total=practiceState.questionIds.length;
+document.getElementById('quiz-progress-text').textContent='绗?+(idx+1)+'/'+total+'棰?;
+document.getElementById('quiz-progress-bar').style.width=((idx+1)/total*100)+'%';
+var result=practiceState.results[idx];
+var shuffledOpt=practiceState.shuffledOptions[q.id];
+var optionsHtml='';
+if(q.options){
+var optList=shuffledOpt?shuffledOpt.map(function(i){return q.options[i]}):q.options;
+optList.forEach(function(optText,displayIdx){
+var origIdx=shuffledOpt?shuffledOpt[displayIdx]:displayIdx;
+var isSelected=result&&result.userAnswer&&(
+q.type==='multiple'?result.userAnswer.includes(optText):result.userAnswer===optText
+);
+var cls='option-item'+(isSelected?' selected':'');
+if(result&&result.isCorrect!==undefined){
+if(q.type==='multiple'){
+if(q.answer.includes(optText))cls+=' correct';
+else if(isSelected)cls+=' wrong';
+}else{
+if(q.answer===optText)cls+=' correct';
+else if(isSelected)cls+=' wrong';
+}
+}
+optionsHtml+='<div class="'+cls+'" onclick="'+(result?'':'selectOption('+displayIdx+')')+'">'+
+'<div class="option-letter">'+String.fromCharCode(65+displayIdx)+'</div><div class="option-text">'+optText+'</div></div>';
+});
+}
+var hintHtml='';
+if(q.type==='short'){
+var usedHint=result&&result.usedHint;
+hintHtml='<button class="btn-secondary" style="margin:8px 0" onclick="showHint(\''+q.id+'\')"'+(usedHint?' disabled':'')+'>'+
+(usedHint?'宸叉煡鐪嬫彁绀?:'馃挕 鎻愮ず')+'</button><div id="hint-area"></div>';
+}
+var content='<div class="question-card">'+
+typeTag(q.type)+(q.pred?'<span class="tag tag-predict" style="margin-left:4px">棰勬祴棰?/span>':'')+
+'<span class="tag" style="margin-left:4px;background:#f0f0f0;color:#888">'+q.score+'鍒?/span>'+
+'<div class="question-stem">'+q.stem+'</div>';
+if(q.type==='short'){
+content+='<textarea class="answer-area" id="answer-input" placeholder="璇疯緭鍏ヤ綘鐨勭瓟妗?'+(result?'disabled':'')+'>'+(result?result.userAnswer:'')+'</textarea>';
+content+=hintHtml;
+}else{
+content+='<div class="option-list">'+optionsHtml+'</div>';
+}
+if(result&&result.isCorrect!==undefined){
+content+='<div class="explanation"><div class="label">绛旀瑙ｆ瀽</div>';
+if(q.type==='short'){
+content+='<p><strong>浣犵殑寰楀垎锛?/strong><span style="color:var(--primary);font-weight:700">'+result.score+'/5</span></p>';
+if(result.aiFeedback)content+='<p style="margin-top:4px"><strong>AI鍙嶉锛?/strong>'+result.aiFeedback+'</p>';
+content+='<p style="margin-top:8px"><strong>鍙傝€冪瓟妗堬細</strong>'+q.answer+'</p>';
+}else{
+content+='<p><strong>姝ｇ‘绛旀锛?/strong>'+q.answer+'</p>';
+content+='<p style="margin-top:4px">'+q.explain+'</p>';
+}
+content+='</div>';
+}
+content+='</div>';
+document.getElementById('quiz-content').innerHTML=content;
+var footerHtml='';
+if(!result||result.isCorrect===undefined){
+footerHtml+='<button class="btn-primary" onclick="submitQuizAnswer()">鎻愪氦</button>';
+}else{
+if(idx<total-1)footerHtml+='<button class="btn-primary" onclick="nextQuestion()">涓嬩竴棰?/button>';
+else footerHtml+='<button class="btn-primary" onclick="finishPractice()">瀹屾垚</button>';
+footerHtml+='<button class="btn-secondary" onclick="manualAddError()">鍔犲叆閿欓鏈?/button>';
+}
+document.getElementById('quiz-footer').innerHTML=footerHtml;
+}
+
+var selectedOptions={};
+function selectOption(displayIdx){
+var q=getQ(practiceState.questionIds[practiceState.currentIndex]);
+if(q.type==='multiple'){
+if(!selectedOptions[practiceState.currentIndex])selectedOptions[practiceState.currentIndex]=[];
+var arr=selectedOptions[practiceState.currentIndex];
+var pos=arr.indexOf(displayIdx);
+if(pos>=0)arr.splice(pos,1);else arr.push(displayIdx);
+}else{selectedOptions[practiceState.currentIndex]=displayIdx}
+renderQuiz();
+}
+
+function submitQuizAnswer(){
+var q=getQ(practiceState.questionIds[practiceState.currentIndex]);
+var result={questionId:q.id,usedHint:false};
+if(q.type==='short'){
+var input=document.getElementById('answer-input');
+if(!input.value.trim()){showToast('璇疯緭鍏ョ瓟妗堝悗鍐嶆彁浜?);return}
+result.userAnswer=input.value.trim();
+result.usedHint=!!document.querySelector('#hint-area .hint-box');
+result.isCorrect=null;result.score=null;result.aiFeedback=null;
+practiceState.results[practiceState.currentIndex]=result;
+if(settings.apiUrl&&settings.apiKey){
+scoreShortAnswerWithAI(q,result.userAnswer,practiceState.currentIndex);
+}else{
+showSelfEval(practiceState.currentIndex);
+}
+}else{
+var sel=selectedOptions[practiceState.currentIndex];
+if(sel===undefined||(Array.isArray(sel)&&sel.length===0)){showToast('璇烽€夋嫨绛旀鍚庡啀鎻愪氦');return}
+var shuffledOpt=practiceState.shuffledOptions[q.id];
+var userAnswer;
+if(q.type==='multiple'){
+var arr=sel;
+userAnswer=arr.map(function(displayIdx){return shuffledOpt?q.options[shuffledOpt[displayIdx]]:q.options[displayIdx]});
+}else{
+userAnswer=shuffledOpt?q.options[shuffledOpt[sel]]:q.options[sel];
+}
+result.userAnswer=userAnswer;
+if(q.type==='multiple'){
+result.isCorrect=arraysEqual(userAnswer.sort(),q.answer.slice().sort());
+}else{
+result.isCorrect=userAnswer===q.answer;
+}
+result.score=result.isCorrect?q.score:0;
+practiceState.results[practiceState.currentIndex]=result;
+if(!result.isCorrect)addToErrorBook(q.id,'auto');
+renderQuiz();
+}
+}
+
+function arraysEqual(a,b){if(a.length!==b.length)return false;for(var i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true}
+
+function showHint(qid){
+var q=getQ(qid);
+var sentences=q.answer.split('銆?);
+var hint=sentences.slice(0,2).join('銆?)+'銆?;
+document.getElementById('hint-area').innerHTML='<div class="hint-box">馃挕 '+hint+'</div>';
+var result=practiceState.results[practiceState.currentIndex];
+if(!result){practiceState.results[practiceState.currentIndex]={questionId:qid,usedHint:true,userAnswer:'',isCorrect:undefined,score:0,aiFeedback:''}}
+else result.usedHint=true;
+}
+
+function nextQuestion(){
+practiceState.currentIndex++;
+selectedOptions={};
+renderQuiz();
+}
+
+function finishPractice(){finishPractice_()}
+
+function finishPractice_(){
+var total=practiceState.questionIds.length;
+var correct=0,errors=0;
+practiceState.results.forEach(function(r){
+if(r.isCorrect===true)correct++;
+else if(r.isCorrect===false)errors++;
+});
+var accuracy=total>0?Math.round((correct+errors>0?correct/(correct+errors)*100:0)):0;
+var duration=Math.round((Date.now()-practiceState.startTime)/1000);
+var record={id:'PR'+Date.now(),date:new Date().toISOString(),type:practiceState.type,totalQuestions:total,correctCount:correct,errorCount:errors,accuracyRate:accuracy,duration:duration,details:practiceState.results};
+var records=load('practice_records',[]);records.push(record);save('practice_records',records);
+// Update error book for error practice
+if(practiceState.isErrorPractice){
+practiceState.results.forEach(function(r){
+if(r.isCorrect===true)updateErrorBookCorrect(r.questionId);
+else if(r.isCorrect===false)resetErrorBookCorrect(r.questionId);
+});
+}
+practiceState=null;selectedOptions={};
+navigate('practice-result');
+renderPracticeResult(record);
+}
+
+function renderPracticeResult(record){
+var html='<div class="result-score"><div class="score">'+record.accuracyRate+'%</div><div class="label">姝ｇ‘鐜?/div></div>';
+html+='<div class="card"><p>姝ｇ‘锛?+record.correctCount+' / '+record.totalQuestions+'銆€|銆€鑰楁椂锛?+formatDuration(record.duration)+'</p></div>';
+// Per type stats
+var typeStats={};
+record.details.forEach(function(d){
+var q=getQ(d.questionId);if(!q)return;
+if(!typeStats[q.type])typeStats[q.type]={total:0,correct:0};
+typeStats[q.type].total++;
+if(d.isCorrect)typeStats[q.type].correct++;
+});
+html+='<div class="card"><h3 style="margin-bottom:8px">鎸夐鍨嬬粺璁?/h3><table><tr><th>棰樺瀷</th><th>姝ｇ‘/鎬绘暟</th><th>姝ｇ‘鐜?/th></tr>';
+Object.keys(typeStats).forEach(function(t){
+var s=typeStats[t];
+html+='<tr><td>'+typeLabel(t)+'</td><td>'+s.correct+'/'+s.total+'</td><td>'+Math.round(s.correct/s.total*100)+'%</td></tr>';
+});
+html+='</table></div>';
+html+='<div style="text-align:center;margin-top:12px"><button class="btn-secondary" onclick="navigate(\'home\')">杩斿洖棣栭〉</button></div>';
+document.getElementById('practice-result-content').innerHTML=html;
+}
+
+function exitPractice(){
+if(practiceState&&practiceState.results&&practiceState.results.length>0){
+save('practice_progress',practiceState);
+}
+practiceState=null;selectedOptions={};navigate('home');
+}
+
+function manualAddError(){
+var q=getQ(practiceState.questionIds[practiceState.currentIndex]);
+addToErrorBook(q.id,'manual');
+showToast('宸插姞鍏ラ敊棰樻湰');
+}
+
+// ===== Error Book =====
+function addToErrorBook(qid,source){
+var eb=load('error_book',[]);
+var existing=eb.find(function(e){return e.questionId===qid&&e.isActive});
+if(existing)return;
+var existingInactive=eb.find(function(e){return e.questionId===qid&&!e.isActive});
+if(existingInactive){existingInactive.isActive=true;existingInactive.source=source;existingInactive.consecutiveCorrect=0;existingInactive.addedDate=new Date().toISOString()}
+else{eb.push({questionId:qid,addedDate:new Date().toISOString(),source:source,consecutiveCorrect:0,isActive:true})}
+save('error_book',eb);
+}
+function updateErrorBookCorrect(qid){
+var eb=load('error_book',[]);var e=eb.find(function(x){return x.questionId===qid&&x.isActive});
+if(e){e.consecutiveCorrect++;if(e.consecutiveCorrect>=2){e.isActive=false;showToast('璇ラ宸叉帉鎻★紝绉诲嚭閿欓鏈?)}}
+save('error_book',eb);
+}
+function resetErrorBookCorrect(qid){
+var eb=load('error_book',[]);var e=eb.find(function(x){return x.questionId===qid&&x.isActive});
+if(e){e.consecutiveCorrect=0}save('error_book',eb);
+}
+function renderErrorBook(){
+var eb=load('error_book',[]);var active=eb.filter(function(e){return e.isActive});
+var mastered=eb.filter(function(e){return !e.isActive});
+var html='<div class="stat-grid"><div class="stat-item"><div class="num">'+active.length+'</div><div class="label">寰呭涔?/div></div><div class="stat-item"><div class="num">'+mastered.length+'</div><div class="label">宸叉帉鎻?/div></div></div>';
+if(active.length>0){
+html+='<button class="btn-primary" style="width:100%;margin-bottom:12px" onclick="startPractice(\'error\')">寮€濮嬮敊棰樼粌涔?/button>';
+html+='<div class="card"><table><tr><th>棰樺彿</th><th>棰樺瀷</th><th>棰樺共鎽樿</th><th>杩炵画绛斿</th><th>鏉ユ簮</th></tr>';
+active.forEach(function(e){
+var q=getQ(e.questionId);if(!q)return;
+html+='<tr><td>'+e.questionId+'</td><td>'+typeTag(q.type)+'</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">'+q.stem.substring(0,30)+'...</td><td>'+e.consecutiveCorrect+'/2</td><td>'+(e.source==='auto'?'鑷姩':'鎵嬪姩')+'</td></tr>';
+});
+html+='</table></div>';
+}else{
+html+='<div class="empty-state"><div class="icon">鉁?/div><p>閿欓鏈负绌?/p></div>';
+}
+document.getElementById('error-book-content').innerHTML=html;
+}
+
+// ===== AI Scoring =====
+async function scoreShortAnswerWithAI(q,userAnswer,resultIdx){
+var content=document.getElementById('quiz-content');
+var btnArea=document.getElementById('quiz-footer');
+btnArea.innerHTML='<div style="text-align:center"><div class="loading"></div> AI姝ｅ湪鍒ゅ垎...</div>';
+try{
+var response=await fetch(settings.apiUrl+'/chat/completions',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.apiKey},
+body:JSON.stringify({
+model:settings.model||'gpt-4o-mini',
+messages:[
+{role:'system',content:'浣犳槸涓€浣嶈€冭瘯璇勫垎鑰佸笀銆傝鏍规嵁棰樼洰鍜屽弬鑰冪瓟妗堬紝瀵瑰鐢熺殑浣滅瓟杩涜瀹㈣璇勫垎銆傛弧鍒?鍒嗭紝杩斿洖JSON鏍煎紡锛歿"score":鍒嗘暟,"feedback":"涓€鍙ヨ瘽璇勪环"}銆傝瘎鍒嗘爣鍑嗭細绛旀瑕佺偣瑕嗙洊搴︺€侀€昏緫姝ｇ‘鎬с€佸叧閿湳璇噯纭€с€傚彧杩斿洖JSON锛屼笉瑕佸叾浠栧唴瀹广€?},
+{role:'user',content:'棰樼洰锛?+q.stem+'\n鍙傝€冪瓟妗堬細'+q.answer+'\n瀛︾敓浣滅瓟锛?+userAnswer+'\n璇疯瘎鍒嗐€?}
+],
+temperature:0.3
+})
+});
+var data=await response.json();
+var text=data.choices[0].message.content;
+var jsonMatch=text.match(/\{[\s\S]*\}/);
+if(jsonMatch){
+var parsed=JSON.parse(jsonMatch[0]);
+practiceState.results[resultIdx].score=parsed.score;
+practiceState.results[resultIdx].aiFeedback=parsed.feedback;
+practiceState.results[resultIdx].isCorrect=parsed.score>=3;
+}else throw new Error('Invalid JSON');
+btnArea.innerHTML='';
+renderQuiz();
+}catch(e){
+console.error('AI scoring error:',e);
+showSelfEval(resultIdx);
+}
+}
+
+function showSelfEval(resultIdx){
+var q=getQ(practiceState.questionIds[resultIdx]);
+document.getElementById('quiz-footer').innerHTML='<div><p style="font-size:13px;margin-bottom:8px">AI鏈厤缃垨璋冪敤澶辫触锛岃鍙傝€冪瓟妗堣嚜璇勬墦鍒嗭細</p>'+
+'<div class="self-eval">'+
+[0,1,2,3,4,5].map(function(s){return '<button onclick="selfEvalScore('+resultIdx+','+s+')">'+s+'鍒?/button>'}).join('')+
+'</div></div>';
+var hintArea=document.getElementById('quiz-content');
+var existing=hintArea.querySelector('.explanation');
+if(!existing){
+hintArea.innerHTML+='<div class="explanation"><div class="label">鍙傝€冪瓟妗?/div><p>'+q.answer+'</p></div>';
+}
+}
+
+function selfEvalScore(resultIdx,score){
+var q=getQ(practiceState.questionIds[resultIdx]);
+practiceState.results[resultIdx].score=score;
+practiceState.results[resultIdx].aiFeedback='鐢ㄦ埛鑷瘎锛?+score+'鍒?;
+practiceState.results[resultIdx].isCorrect=score>=3;
+if(score<3)addToErrorBook(q.id,'auto');
+renderQuiz();
+}
+
+// ===== Exam =====
+function startExam(){
+var questionIds=QUESTIONS.filter(function(q){return !q.pred}).map(function(q){return q.id});
+// Group by type, shuffle within type
+var groups={single:[],multiple:[],truefalse:[],short:[]};
+questionIds.forEach(function(id){var q=getQ(id);groups[q.type].push(id)});
+Object.keys(groups).forEach(function(t){if(settings.shuffleQ)groups[t]=shuffle(groups[t])});
+questionIds=[].concat(groups.single,groups.multiple,groups.truefalse,groups.short);
+var shuffledOptions={};
+if(settings.shuffleO){
+questionIds.forEach(function(qid){
+var q=getQ(qid);if(q.options&&q.options.length>1){
+shuffledOptions[qid]=shuffle(q.options.map(function(_,i){return i}));
+}
+});
+}
+examState={questionIds:questionIds,shuffledOptions:shuffledOptions,currentIndex:0,answers:{},startTime:Date.now(),duration:7200};
+navigate('exam-quiz');
+renderExam();
+startExamTimer();
+}
+
+function startExamTimer(){
+if(examTimer)clearInterval(examTimer);
+examTimer=setInterval(function(){
+var remaining=Math.round(examState.duration-(Date.now()-examState.startTime)/1000);
+if(remaining<=0){clearInterval(examTimer);submitExam();return}
+var timerEl=document.getElementById('exam-timer');
+timerEl.textContent=formatTime(remaining);
+if(remaining<=600)timerEl.classList.add('warning');
+},1000);
+}
+
+function renderExam(){
+var q=getQ(examState.questionIds[examState.currentIndex]);
+var idx=examState.currentIndex,total=examState.questionIds.length;
+document.getElementById('exam-progress-text').textContent='绗?+(idx+1)+'/'+total+'棰?;
+document.getElementById('exam-progress-bar').style.width=((idx+1)/total*100)+'%';
+var shuffledOpt=examState.shuffledOptions[q.id];
+var content='<div class="question-card">'+typeTag(q.type)+'<span class="tag" style="margin-left:4px;background:#f0f0f0;color:#888">'+q.score+'鍒?/span>'+
+'<div class="question-stem">'+q.stem+'</div>';
+var ans=examState.answers[idx];
+if(q.type==='short'){
+content+='<textarea class="answer-area" id="exam-answer" placeholder="璇疯緭鍏ヤ綘鐨勭瓟妗? oninput="saveExamAnswer()">'+(ans?ans:'')+'</textarea>';
+var usedHint=examState.hints&&examState.hints[idx];
+content+='<button class="btn-secondary" style="margin:8px 0" onclick="showExamHint('+idx+')"'+(usedHint?' disabled':'')+'>'+(usedHint?'宸叉煡鐪嬫彁绀?:'馃挕 鎻愮ず')+'</button>';
+if(usedHint){var sentences=q.answer.split('銆?);content+='<div class="hint-box">馃挕 '+sentences.slice(0,2).join('銆?)+'銆?/div>'}
+}else{
+var optList=shuffledOpt?shuffledOpt.map(function(i){return q.options[i]}):q.options;
+content+='<div class="option-list">';
+optList.forEach(function(optText,displayIdx){
+var isSelected=ans&&(q.type==='multiple'?ans.includes(optText):ans===optText);
+content+='<div class="option-item'+(isSelected?' selected':'')+'" onclick="selectExamOption('+displayIdx+')">'+
+'<div class="option-letter">'+String.fromCharCode(65+displayIdx)+'</div><div class="option-text">'+optText+'</div></div>';
+});
+content+='</div>';
+}
+content+='</div>';
+document.getElementById('exam-content').innerHTML=content;
+renderExamNav();
+}
+
+function renderExamNav(){
+var html='';
+examState.questionIds.forEach(function(id,idx){
+var answered=examState.answers[idx]!==undefined&&examState.answers[idx]!==null&&examState.answers[idx]!=='';
+var cls='nav-cell'+(answered?' answered':'')+(idx===examState.currentIndex?' current':'');
+html+='<div class="'+cls+'" onclick="gotoExamQuestion('+idx+')">'+(idx+1)+'</div>';
+});
+document.getElementById('exam-nav').innerHTML=html;
+}
+
+function selectExamOption(displayIdx){
+var q=getQ(examState.questionIds[examState.currentIndex]);
+var shuffledOpt=examState.shuffledOptions[q.id];
+var optText=shuffledOpt?q.options[shuffledOpt[displayIdx]]:q.options[displayIdx];
+if(q.type==='multiple'){
+if(!examState.answers[examState.currentIndex])examState.answers[examState.currentIndex]=[];
+var arr=examState.answers[examState.currentIndex];
+var pos=arr.indexOf(optText);
+if(pos>=0)arr.splice(pos,1);else arr.push(optText);
+}else{examState.answers[examState.currentIndex]=optText}
+renderExam();
+}
+function saveExamAnswer(){examState.answers[examState.currentIndex]=document.getElementById('exam-answer').value;renderExamNav()}
+function showExamHint(idx){if(!examState.hints)examState.hints={};examState.hints[idx]=true;renderExam()}
+function gotoExamQuestion(idx){examState.currentIndex=idx;renderExam()}
+function nextExamQuestion(){if(examState.currentIndex<examState.questionIds.length-1){examState.currentIndex++;renderExam()}}
+function prevExamQuestion(){if(examState.currentIndex>0){examState.currentIndex--;renderExam()}}
+
+function confirmSubmitExam(){
+var answered=0;examState.questionIds.forEach(function(_,idx){if(examState.answers[idx]!==undefined&&examState.answers[idx]!==null&&examState.answers[idx]!=='')answered++});
+showModal('<h3>纭浜ゅ嵎</h3><p>宸茬瓟'+answered+'/'+examState.questionIds.length+'棰橈紝纭畾浜ゅ嵎鍚楋紵</p><div class="actions"><button class="btn-secondary" onclick="hideModal()">鍙栨秷</button><button class="btn-primary" onclick="hideModal();submitExam()">纭浜ゅ嵎</button></div>');
+}
+
+async function submitExam(){
+if(examTimer)clearInterval(examTimer);
+showModal('<h3>姝ｅ湪鍒ゅ垎</h3><p><div class="loading"></div> 璇风◢鍊?..</p>');
+var results=[];
+var correctCount=0,errorCount=0;
+var scoreByType={single:0,multiple:0,truefalse:0,short:0};
+for(var i=0;i<examState.questionIds.length;i++){
+var q=getQ(examState.questionIds[i]);var ans=examState.answers[i];
+var result={questionId:q.id,userAnswer:ans||'',isCorrect:false,score:0,usedHint:!!(examState.hints&&examState.hints[i]),aiFeedback:''};
+if(q.type==='short'){
+if(!ans||!ans.trim()){result.score=0;result.isCorrect=false;result.aiFeedback='鏈綔绛?}
+else if(settings.apiUrl&&settings.apiKey){
+try{
+var resp=await fetch(settings.apiUrl+'/chat/completions',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.apiKey},
+body:JSON.stringify({model:settings.model||'gpt-4o-mini',messages:[
+{role:'system',content:'浣犳槸涓€浣嶈€冭瘯璇勫垎鑰佸笀銆傝鏍规嵁棰樼洰鍜屽弬鑰冪瓟妗堬紝瀵瑰鐢熺殑浣滅瓟杩涜瀹㈣璇勫垎銆傛弧鍒?鍒嗭紝杩斿洖JSON鏍煎紡锛歿"score":鍒嗘暟,"feedback":"涓€鍙ヨ瘽璇勪环"}銆傚彧杩斿洖JSON銆?},
+{role:'user',content:'棰樼洰锛?+q.stem+'\n鍙傝€冪瓟妗堬細'+q.answer+'\n瀛︾敓浣滅瓟锛?+ans+'\n璇疯瘎鍒嗐€?}
+],temperature:0.3})
+});
+var data=await resp.json();var text=data.choices[0].message.content;
+var m=text.match(/\{[\s\S]*\}/);
+if(m){var p=JSON.parse(m[0]);result.score=p.score;result.isCorrect=p.score>=3;result.aiFeedback=p.feedback}
+else{result.score=0;result.isCorrect=false;result.aiFeedback='鍒ゅ垎澶辫触'}
+}catch(e){result.score=0;result.isCorrect=false;result.aiFeedback='鍒ゅ垎澶辫触锛?+e.message}
+}else{result.score=0;result.isCorrect=false;result.aiFeedback='鏈厤缃瓵PI锛岃鑷瘎'}
+}else if(ans){
+if(q.type==='multiple'){result.isCorrect=arraysEqual(ans.slice().sort(),q.answer.slice().sort())}
+else{result.isCorrect=ans===q.answer}
+result.score=result.isCorrect?q.score:0;
+}else{result.score=0;result.isCorrect=false}
+if(result.isCorrect)correctCount++;else errorCount++;
+scoreByType[q.type]+=result.score;
+if(!result.isCorrect)addToErrorBook(q.id,'auto');
+results.push(result);
+}
+var totalScore=Math.round(Object.keys(scoreByType).reduce(function(s,k){return s+scoreByType[k]},0)*10)/10;
+var duration=Math.round((Date.now()-examState.startTime)/1000);
+var record={id:'ER'+Date.now(),date:new Date().toISOString(),totalQuestions:84,correctCount:correctCount,errorCount:errorCount,accuracyRate:Math.round(correctCount/84*100),totalScore:totalScore,duration:duration,scoreByType:scoreByType,details:results};
+var records=load('exam_records',[]);records.push(record);save('exam_records',records);
+examState=null;hideModal();
+navigate('exam-result');
+renderExamResult(record);
+}
+
+function renderExamResult(record){
+var html='<div class="result-score"><div class="score">'+record.totalScore+'</div><div class="label">/ 100鍒?/div></div>';
+html+='<div class="card" style="text-align:center"><p>姝ｇ‘锛?+record.correctCount+'銆€閿欒锛?+record.errorCount+'銆€姝ｇ‘鐜囷細'+record.accuracyRate+'%銆€鑰楁椂锛?+formatDuration(record.duration)+'</p></div>';
+html+='<div class="card"><h3 style="margin-bottom:8px">鍚勯鍨嬪緱鍒?/h3><table><tr><th>棰樺瀷</th><th>婊″垎</th><th>寰楀垎</th></tr>';
+html+='<tr><td>鍗曢€夐</td><td>40</td><td>'+record.scoreByType.single+'</td></tr>';
+html+='<tr><td>澶氶€夐</td><td>30</td><td>'+record.scoreByType.multiple+'</td></tr>';
+html+='<tr><td>鍒ゆ柇棰?/td><td>10</td><td>'+record.scoreByType.truefalse+'</td></tr>';
+html+='<tr><td>绠€绛旈</td><td>20</td><td>'+record.scoreByType.shortanswer||record.scoreByType.short+'</td></tr>';
+html+='</table></div>';
+var errorAdded=record.errorCount;
+if(errorAdded>0)html+='<div class="card" style="text-align:center;color:var(--warning)">'+errorAdded+'閬撻敊棰樺凡鑷姩鍔犲叆閿欓鏈?/div>';
+html+='<div class="result-detail"><h3 style="margin:12px 0">閫愰鍥為【</h3>';
+record.details.forEach(function(d,i){
+var q=getQ(d.questionId);if(!q)return;
+var cls=d.isCorrect?'correct':'wrong';
+var label=d.isCorrect?'鉁?姝ｇ‘':'鉁?閿欒';
+html+='<div class="detail-item"><div class="stem">'+(i+1)+'. '+typeTag(q.type)+' '+q.stem+'</div>';
+html+='<div class="your-answer '+cls+'">浣犵殑绛旀锛?+(d.userAnswer||'鏈綔绛?)+' ('+label+'锛?+d.score+'鍒?</div>';
+if(q.type==='short'&&d.aiFeedback)html+='<div class="ai-feedback">AI鍙嶉锛?+d.aiFeedback+'</div>';
+html+='<div class="your-answer" style="background:#e8f2fc;color:var(--primary)">姝ｇ‘绛旀锛?+q.answer+'</div>';
+if(q.explain)html+='<div style="font-size:13px;color:var(--text-light);margin-top:4px">'+q.explain+'</div>';
+html+='</div>';
+});
+html+='</div>';
+html+='<div style="text-align:center;margin-top:16px"><button class="btn-secondary" onclick="navigate(\'home\')">杩斿洖棣栭〉</button> <button class="btn-primary" onclick="navigate(\'exam-info\')">鍐嶈€冧竴娆?/button></div>';
+document.getElementById('exam-result-content').innerHTML=html;
+}
+
+// ===== Stats =====
+function renderStats(){
+var pr=load('practice_records',[]),er=load('exam_records',[]),eb=load('error_book',[]);
+var html='<div class="stat-grid"><div class="stat-item"><div class="num">'+pr.length+'</div><div class="label">缁冧範娆℃暟</div></div><div class="stat-item"><div class="num">'+er.length+'</div><div class="label">鑰冭瘯娆℃暟</div></div></div>';
+// Trend charts
+if(pr.length>0){
+html+='<div class="card"><h3 style="margin-bottom:8px">缁冧範姝ｇ‘鐜囪秼鍔匡紙鏈€杩?0娆★級</h3><canvas id="practice-chart" width="700" height="200"></canvas></div>';
+}
+if(er.length>0){
+html+='<div class="card"><h3 style="margin-bottom:8px">鑰冭瘯寰楀垎瓒嬪娍锛堟渶杩?0娆★級</h3><canvas id="exam-chart" width="700" height="200"></canvas></div>';
+}
+// Per type stats
+var typeStats={single:{total:0,correct:0},multiple:{total:0,correct:0},truefalse:{total:0,correct:0},short:{total:0,correct:0}};
+pr.forEach(function(r){r.details.forEach(function(d){var q=getQ(d.questionId);if(!q||!typeStats[q.type])return;typeStats[q.type].total++;if(d.isCorrect)typeStats[q.type].correct++})});
+er.forEach(function(r){r.details.forEach(function(d){var q=getQ(d.questionId);if(!q||!typeStats[q.type])return;typeStats[q.type].total++;if(d.isCorrect)typeStats[q.type].correct++})});
+html+='<div class="card"><h3 style="margin-bottom:8px">鎸夐鍨嬬粺璁?/h3><table><tr><th>棰樺瀷</th><th>鎬荤瓟棰?/th><th>姝ｇ‘</th><th>姝ｇ‘鐜?/th></tr>';
+Object.keys(typeStats).forEach(function(t){var s=typeStats[t];html+='<tr><td>'+typeLabel(t)+'</td><td>'+s.total+'</td><td>'+s.correct+'</td><td>'+(s.total>0?Math.round(s.correct/s.total*100):0)+'%</td></tr>'});
+html+='</table></div>';
+// Error book stats
+var active=eb.filter(function(e){return e.isActive});var mastered=eb.filter(function(e){return !e.isActive});
+var autoCount=eb.filter(function(e){return e.source==='auto'}).length;
+var manualCount=eb.filter(function(e){return e.source==='manual'}).length;
+html+='<div class="card"><h3 style="margin-bottom:8px">閿欓鏈粺璁?/h3><table><tr><th>鎸囨爣</th><th>鏁伴噺</th></tr><tr><td>寰呭涔?/td><td>'+active.length+'</td></tr><tr><td>宸叉帉鎻?/td><td>'+mastered.length+'</td></tr><tr><td>鑷姩鍏ユ湰</td><td>'+autoCount+'</td></tr><tr><td>鎵嬪姩鍏ユ湰</td><td>'+manualCount+'</td></tr></table></div>';
+// Recent records
+if(pr.length>0){
+html+='<div class="card"><h3 style="margin-bottom:8px">鏈€杩戠粌涔犺褰?/h3><table><tr><th>鏃ユ湡</th><th>绫诲瀷</th><th>姝ｇ‘鐜?/th><th>鑰楁椂</th></tr>';
+pr.slice(-20).reverse().forEach(function(r){
+html+='<tr><td>'+new Date(r.date).toLocaleDateString()+'</td><td>'+typeLabel(r.type)+'</td><td>'+r.accuracyRate+'%</td><td>'+formatDuration(r.duration)+'</td></tr>';
+});
+html+='</table></div>';
+}
+if(er.length>0){
+html+='<div class="card"><h3 style="margin-bottom:8px">鏈€杩戣€冭瘯璁板綍</h3><table><tr><th>鏃ユ湡</th><th>鎬诲垎</th><th>姝ｇ‘鐜?/th><th>鑰楁椂</th></tr>';
+er.slice(-20).reverse().forEach(function(r){
+html+='<tr><td>'+new Date(r.date).toLocaleDateString()+'</td><td>'+r.totalScore+'</td><td>'+r.accuracyRate+'%</td><td>'+formatDuration(r.duration)+'</td></tr>';
+});
+html+='</table></div>';
+}
+if(pr.length===0&&er.length===0)html+='<div class="empty-state"><div class="icon">馃搳</div><p>鏆傛棤鏁版嵁锛屽紑濮嬬粌涔犳垨鑰冭瘯鍚庤繖閲屼細鏄剧ず缁熻</p></div>';
+document.getElementById('stats-content').innerHTML=html;
+// Draw charts
+if(pr.length>0)drawTrendChart('practice-chart',pr.slice(-10).map(function(r){return r.accuracyRate}),'%','#4A90D9');
+if(er.length>0)drawTrendChart('exam-chart',er.slice(-10).map(function(r){return r.totalScore}),'鍒?,'#27ae60');
+}
+
+function drawTrendChart(canvasId,data,unit,color){
+var canvas=document.getElementById(canvasId);if(!canvas)return;
+var ctx=canvas.getContext('2d');
+var w=canvas.width,h=canvas.height,padding=30;
+ctx.clearRect(0,0,w,h);
+var max=unit==='%'?100:100;var min=0;
+// Grid lines
+ctx.strokeStyle='#eef2f7';ctx.lineWidth=1;
+for(var i=0;i<=4;i++){var y=padding+(h-padding*2)/4*i;ctx.beginPath();ctx.moveTo(padding,y);ctx.lineTo(w-padding,y);ctx.stroke()}
+// Data line
+if(data.length>1){
+ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+data.forEach(function(v,i){var x=padding+(w-padding*2)/(data.length-1)*i;var y=h-padding-(h-padding*2)*v/max;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});
+ctx.stroke();
+// Points
+ctx.fillStyle=color;data.forEach(function(v,i){var x=padding+(w-padding*2)/(data.length-1)*i;var y=h-padding-(h-padding*2)*v/max;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill()});
+// Labels
+ctx.fillStyle='#7a8a9a';ctx.font='11px sans-serif';ctx.textAlign='center';
+data.forEach(function(v,i){var x=padding+(w-padding*2)/(data.length-1)*i;var y=h-padding-(h-padding*2)*v/max;ctx.fillText(v+unit,x,y-8)});
+}
+// Axis labels
+ctx.fillStyle='#7a8a9a';ctx.font='11px sans-serif';ctx.textAlign='right';
+ctx.fillText(max+unit,padding-4,padding+4);ctx.fillText('0',padding-4,h-padding+4);
+}
+
+// ===== Settings =====
+function renderSettings(){
+document.getElementById('setting-shuffle-q').classList.toggle('on',settings.shuffleQ);
+document.getElementById('setting-shuffle-o').classList.toggle('on',settings.shuffleO);
+document.getElementById('setting-api-url').value=settings.apiUrl||'';
+document.getElementById('setting-api-key').value=settings.apiKey||'';
+document.getElementById('setting-model').value=settings.model||'';
+// Save on input
+document.getElementById('setting-api-url').oninput=function(){settings.apiUrl=this.value;saveSettings()};
+document.getElementById('setting-api-key').oninput=function(){settings.apiKey=this.value;saveSettings()};
+document.getElementById('setting-model').oninput=function(){settings.model=this.value;saveSettings()};
+}
+
+async function testAPI(){
+var url=settings.apiUrl,key=settings.apiKey,model=settings.model||'gpt-4o-mini';
+if(!url||!key){document.getElementById('api-test-result').textContent='璇峰～鍐橴RL鍜孠ey';return}
+document.getElementById('api-test-result').innerHTML='<div class="loading"></div> 娴嬭瘯涓?..';
+try{
+var resp=await fetch(url+'/chat/completions',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+body:JSON.stringify({model:model,messages:[{role:'user',content:'Hi'}],max_tokens:5})
+});
+if(resp.ok)document.getElementById('api-test-result').innerHTML='鉁?杩炴帴鎴愬姛';
+else document.getElementById('api-test-result').innerHTML='鉂?杩炴帴澶辫触锛欻TTP '+resp.status;
+}catch(e){document.getElementById('api-test-result').innerHTML='鉂?杩炴帴澶辫触锛?+e.message}
+}
+
+function confirmClearData(){
+showModal('<h3>娓呴櫎鎵€鏈夋暟鎹?/h3><p>纭畾瑕佹竻闄ゆ墍鏈夋暟鎹悧锛熷寘鎷粌涔犺褰曘€佽€冭瘯璁板綍銆侀敊棰樻湰鍜岃缃紝姝ゆ搷浣滀笉鍙仮澶嶃€?/p><div class="actions"><button class="btn-secondary" onclick="hideModal()">鍙栨秷</button><button class="btn-danger" onclick="clearAllData()">纭娓呴櫎</button></div>');
+}
+function clearAllData(){
+Object.keys(localStorage).filter(function(k){return k.startsWith(SP)}).forEach(function(k){localStorage.removeItem(k)});
+settings={shuffleQ:true,shuffleO:true,apiUrl:'',apiKey:'',model:''};saveSettings();
+hideModal();navigate('settings');showToast('鎵€鏈夋暟鎹凡娓呴櫎');
+}
+
+// ===== Init =====
+// Check for saved practice progress
+var savedProgress=load('practice_progress',null);
+if(savedProgress){
+// Could offer to resume, for now just clear it
+localStorage.removeItem(SP+'practice_progress');
+}
+renderHome();
+</script>
+</body>
+</html>
