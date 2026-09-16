@@ -414,7 +414,8 @@ shuffledOptions[qid]=indices;
 }
 });
 }
-practiceState={type:type,questionIds:questionIds,shuffledOptions:shuffledOptions,currentIndex:0,results:[],startTime:Date.now(),isErrorPractice:type==='error'};
+practiceState={type:type,questionIds:questionIds,shuffledOptions:shuffledOptions,currentIndex:0,results:[],viewAnswers:{},startTime:Date.now(),isErrorPractice:type==='error'};
+selectedOptions={};
 navigate('quiz');
 renderQuiz();
 }
@@ -426,16 +427,21 @@ document.getElementById('quiz-progress-text').textContent='第'+(idx+1)+'/'+tota
 document.getElementById('quiz-progress-bar').style.width=((idx+1)/total*100)+'%';
 var result=practiceState.results[idx];
 var shuffledOpt=practiceState.shuffledOptions[q.id];
+var submitted=result&&result.isCorrect!==undefined;
+var showAnswer=practiceState.viewAnswers&&practiceState.viewAnswers[idx];
 var optionsHtml='';
 if(q.options){
 var optList=shuffledOpt?shuffledOpt.map(function(i){return q.options[i]}):q.options;
+var sel=selectedOptions[idx];
 optList.forEach(function(optText,displayIdx){
-var origIdx=shuffledOpt?shuffledOpt[displayIdx]:displayIdx;
-var isSelected=result&&result.userAnswer&&(
-q.type==='multiple'?result.userAnswer.includes(optText):result.userAnswer===optText
-);
+var isSelected;
+if(submitted){
+isSelected=q.type==='multiple'?(result.userAnswer&&result.userAnswer.includes(optText)):(result.userAnswer===optText);
+}else{
+isSelected=q.type==='multiple'?(sel&&sel.includes(displayIdx)):(sel===displayIdx);
+}
 var cls='option-item'+(isSelected?' selected':'');
-if(result&&result.isCorrect!==undefined){
+if(submitted||showAnswer){
 if(q.type==='multiple'){
 if(q.answer.includes(optText))cls+=' correct';
 else if(isSelected)cls+=' wrong';
@@ -444,7 +450,13 @@ if(q.answer===optText)cls+=' correct';
 else if(isSelected)cls+=' wrong';
 }
 }
-optionsHtml+='<div class="'+cls+'" onclick="'+(result?'':'selectOption('+displayIdx+')')+'">'+
+var clickHandler='';
+if(!submitted){
+clickHandler=' onclick="selectOption('+displayIdx+')"';
+}else if(showAnswer&&!submitted){
+clickHandler='';
+}
+optionsHtml+='<div class="'+cls+'"'+clickHandler+'>'+
 '<div class="option-letter">'+String.fromCharCode(65+displayIdx)+'</div><div class="option-text">'+optText+'</div></div>';
 });
 }
@@ -459,12 +471,12 @@ typeTag(q.type)+(q.pred?'<span class="tag tag-predict" style="margin-left:4px">�
 '<span class="tag" style="margin-left:4px;background:#f0f0f0;color:#888">'+q.score+'分</span>'+
 '<div class="question-stem">'+q.stem+'</div>';
 if(q.type==='short'){
-content+='<textarea class="answer-area" id="answer-input" placeholder="请输入你的答案"'+(result?'disabled':'')+'>'+(result?result.userAnswer:'')+'</textarea>';
+content+='<textarea class="answer-area" id="answer-input" placeholder="请输入你的答案"'+(submitted?'disabled':'')+'>'+(result?result.userAnswer:'')+'</textarea>';
 content+=hintHtml;
 }else{
 content+='<div class="option-list">'+optionsHtml+'</div>';
 }
-if(result&&result.isCorrect!==undefined){
+if(submitted){
 content+='<div class="explanation"><div class="label">答案解析</div>';
 if(q.type==='short'){
 content+='<p><strong>你的得分：</strong><span style="color:var(--primary);font-weight:700">'+result.score+'/5</span></p>';
@@ -475,12 +487,25 @@ content+='<p><strong>正确答案：</strong>'+q.answer+'</p>';
 content+='<p style="margin-top:4px">'+q.explain+'</p>';
 }
 content+='</div>';
+}else if(showAnswer){
+content+='<div class="explanation"><div class="label">答案解析</div>';
+if(q.type==='short'){
+content+='<p><strong>参考答案：</strong>'+q.answer+'</p>';
+}else{
+content+='<p><strong>正确答案：</strong>'+q.answer+'</p>';
+content+='<p style="margin-top:4px">'+q.explain+'</p>';
+}
+content+='</div>';
 }
 content+='</div>';
 document.getElementById('quiz-content').innerHTML=content;
 var footerHtml='';
-if(!result||result.isCorrect===undefined){
+if(!submitted&&!showAnswer){
 footerHtml+='<button class="btn-primary" onclick="submitQuizAnswer()">提交</button>';
+footerHtml+='<button class="btn-secondary" onclick="toggleViewAnswer()">查看答案</button>';
+}else if(!submitted&&showAnswer){
+footerHtml+='<button class="btn-primary" onclick="submitQuizAnswer()">提交</button>';
+footerHtml+='<button class="btn-secondary" onclick="toggleViewAnswer()">隐藏答案</button>';
 }else{
 if(idx<total-1)footerHtml+='<button class="btn-primary" onclick="nextQuestion()">下一题</button>';
 else footerHtml+='<button class="btn-primary" onclick="finishPractice()">完成</button>';
@@ -498,6 +523,12 @@ var arr=selectedOptions[practiceState.currentIndex];
 var pos=arr.indexOf(displayIdx);
 if(pos>=0)arr.splice(pos,1);else arr.push(displayIdx);
 }else{selectedOptions[practiceState.currentIndex]=displayIdx}
+renderQuiz();
+}
+function toggleViewAnswer(){
+var idx=practiceState.currentIndex;
+if(!practiceState.viewAnswers)practiceState.viewAnswers={};
+practiceState.viewAnswers[idx]=!practiceState.viewAnswers[idx];
 renderQuiz();
 }
 
